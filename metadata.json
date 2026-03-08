@@ -1,0 +1,15 @@
+{
+  "estudio_id": "MATRIZ-PRO-01",
+  "nombre_comercial": "De La Matriz Arquitectos",
+  "config_visual": {
+    "logo_url": "https://imagizer.imageshack.com/img922/5753/M7Zp7X.png",
+    "logo_fallback": "https://imagizer.imageshack.com/img926/4921/f6vFvG.jpg",
+    "color_primario": "#B21F24"
+  },
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "name": "De La Matriz - Consultas y Gestión de casos",
+  "description": "Herramienta profesional de diagnóstico para De La Matriz Arquitectos"
+}
