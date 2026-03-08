@@ -9,6 +9,8 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
+        // Esto es lo que agregamos para desbloquear Render:
+        allowedHosts: ['sistema-consultoria-asesoramiento.onrender.com']
       },
       plugins: [react(), tailwindcss()],
       define: {
