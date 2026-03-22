@@ -1,20 +1,18 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore"; // Para la base de datos [2]
-import { getAuth } from "firebase/auth";           // Para el sistema de roles [3]
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
-// Tus credenciales privadas de la consola de Firebase
 const firebaseConfig = {
-  apiKey: "...",
-  authDomain: "...",
-  projectId: "...",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "..."
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-// Inicializamos la aplicación
 const app = initializeApp(firebaseConfig);
-
-// INSTRUCCIÓN PRECISA: Exportación de los motores de datos y seguridad
-export const db = getFirestore(app);  // Permite acceder a Estudios, Usuarios y Casos [2]
-export const auth = getAuth(app);    // Permite gestionar el login y la Matriz de Acceso [3]
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export default app;
+```
