@@ -842,41 +842,150 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
 
 function PanelFGestionEquipo({ estudioId, onBack, onAssignAction }: any) {
   const [arquitectos, setArquitectos] = useState<any[]>([]);
+  const [casos, setCasos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [emailInvitacion, setEmailInvitacion] = useState('');
+  const [nombreInvitacion, setNombreInvitacion] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [mensaje, setMensaje] = useState('');
 
   useEffect(() => {
-    const fetchArquitectos = async () => {
-      const q = query(collection(db, 'Usuarios'), where('rol', '==', 'arquitecto'), where('estudio_id', '==', estudioId));
-      const snapshot = await getDocs(q);
-      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      setArquitectos(data);
-      setLoading(false);
-    };
-    fetchArquitectos();
-  }, [estudioId]);
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const arqQuery = query(
+        collection(db, 'Usuarios'),
+        where('rol', '==', 'arquitecto'),
+        where('estudio_id', '==', estudioId)
+      );
+      const arqSnap = await getDocs(arqQuery);
+      const arqData = arqSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setArquitectos(arqData);
+
+      const casosRef = collection(db, 'Estudios', estudioId, 'Casos');
+      const casosSnap = await getDocs(casosRef);
+      const casosData = casosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setCasos(casosData);
+    } catch (e) {
+      console.error('Error:', e);
+    }
+    setLoading(false);
+  };
+
+  const getCasosCount = (arquitectoId: string) => {
+    return casos.filter(c => c.arquitecto_asignado === arquitectoId && c.estado !== 'RESPONDIDA').length;
+  };
+
+  const handleInvitar = async () => {
+    if (!emailInvitacion || !nombreInvitacion) {
+      setMensaje('Por favor completá nombre y email.');
+      return;
+    }
+    setEnviando(true);
+    try {
+      const { createUserWithEmailAndPassword } = await import('firebase/auth');
+      const tempPassword = 'Temp' + Math.random().toString(36).slice(2, 8) + '!';
+      const userCredential = await createUserWithEmailAndPassword(auth, emailInvitacion, tempPassword);
+      await setDoc(doc(db, 'Usuarios', userCredential.user.uid), {
+        nombre: nombreInvitacion,
+        email: emailInvitacion,
+        rol: 'arquitecto',
+        estudio_id: estudioId,
+        activo: true,
+        fecha_registro: serverTimestamp()
+      });
+      setMensaje(`✅ Arquitecto agregado. Contraseña temporal: ${tempPassword}`);
+      setEmailInvitacion('');
+      setNombreInvitacion('');
+      fetchData();
+    } catch (e: any) {
+      if (e.code === 'auth/email-already-in-use') {
+        setMensaje('❌ Ese email ya está registrado en el sistema.');
+      } else {
+        setMensaje('❌ Error al agregar el arquitecto. Intentá de nuevo.');
+      }
+    }
+    setEnviando(false);
+  };
 
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Gestión de Equipo</span></div>
-      <h2 style={styles.h2}>EQUIPO TÉCNICO</h2>
-      {loading ? <p style={{ color: THEME.gray }}>Cargando equipo...</p> : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          {arquitectos.length === 0 ? (
-            <div style={{ ...styles.cardInfo, border: THEME.border, textAlign: 'center' }}>
-              <p style={{ color: THEME.gray }}>No hay arquitectos registrados aún.</p>
+      <div style={styles.engineeringHeader}>
+        <button onClick={onBack} style={styles.btnBack}>← Dashboard</button>
+        <span>Equipo Técnico</span>
+      </div>
+      <h2 style={styles.h2}>EQUIPO TÉCNICO · ADMINISTRACIÓN</h2>
+      <p style={styles.subtitleBold}>Control de capital profesional, roles y carga operativa.</p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <label style={styles.label}>GESTIÓN DE CARGA PROFESIONAL</label>
+          {loading ? (
+            <p style={{ color: THEME.gray }}>Cargando equipo...</p>
+          ) : arquitectos.length === 0 ? (
+            <p style={{ color: THEME.gray, fontSize: '13px' }}>No hay arquitectos registrados aún.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
+              {arquitectos.map(arq => (
+                <div key={arq.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', border: `1px solid ${THEME.softGray}`, borderRadius: '8px' }}>
+                  <div>
+                    <strong style={{ fontSize: '14px' }}>{arq.nombre}</strong>
+                    <p style={{ fontSize: '12px', color: THEME.gray, margin: '3px 0 0 0' }}>
+                      {getCasosCount(arq.id)} caso{getCasosCount(arq.id) !== 1 ? 's' : ''} activo{getCasosCount(arq.id) !== 1 ? 's' : ''}
+                    </p>
+                    <p style={{ fontSize: '11px', color: THEME.gray, margin: '2px 0 0 0' }}>{arq.email}</p>
+                  </div>
+                  <button
+                    onClick={onAssignAction}
+                    style={{ ...styles.btnPrimary, width: 'auto', padding: '10px 16px', fontSize: '11px' }}
+                  >
+                    Asignar al caso
+                  </button>
+                </div>
+              ))}
             </div>
-          ) : arquitectos.map(a => (
-            <div key={a.id} style={{ ...styles.itemCase, border: THEME.border }}>
-              <strong>{a.nombre}</strong>
-              <p style={{ fontSize: '12px', color: THEME.gray }}>{a.email}</p>
-            </div>
-          ))}
+          )}
         </div>
-      )}
+
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <label style={styles.label}>AGREGAR ARQUITECTO AL ESTUDIO</label>
+          <p style={{ fontSize: '13px', color: THEME.gray, marginBottom: '20px' }}>
+            Sumá profesionales al equipo del estudio.
+          </p>
+          <input
+            placeholder="Nombre completo del Arquitecto"
+            value={nombreInvitacion}
+            onChange={e => setNombreInvitacion(e.target.value)}
+            style={{ ...styles.inputFieldBold, marginBottom: '10px' }}
+          />
+          <input
+            placeholder="Email del Arquitecto"
+            type="email"
+            value={emailInvitacion}
+            onChange={e => setEmailInvitacion(e.target.value)}
+            style={{ ...styles.inputFieldBold, marginBottom: '20px' }}
+          />
+          {mensaje && (
+            <div style={{ padding: '12px', backgroundColor: mensaje.startsWith('✅') ? '#E8F5E9' : '#FFEBEE', borderRadius: '6px', marginBottom: '15px', fontSize: '13px', color: mensaje.startsWith('✅') ? '#2E7D32' : THEME.primary }}>
+              {mensaje}
+            </div>
+          )}
+          <button
+            onClick={handleInvitar}
+            disabled={enviando}
+            style={{ ...styles.btnPrimary, opacity: enviando ? 0.7 : 1 }}
+          >
+            {enviando ? 'Agregando...' : 'AGREGAR AL ESTUDIO'}
+          </button>
+        </div>
+
+      </div>
     </div>
   );
 }
-
 // --- ESTILOS ---
 const styles: { [key: string]: React.CSSProperties } = {
   header: { position: 'sticky', top: 0, zIndex: 100, backgroundColor: '#FFFFFF', borderBottom: '2px solid #1D1D1F', padding: '0 20px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
