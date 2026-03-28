@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { auth, db } from './firebase/config';
 import {
   createUserWithEmailAndPassword,
@@ -830,31 +830,158 @@ function ScreenSeguimiento({ caseId, onBack, onActuaciones }: any) {
 
 function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
   const [caso, setCaso] = useState<any>(null);
+  const [notaInterna, setNotaInterna] = useState('');
+  const [diagnostico, setDiagnostico] = useState('');
+  const [guardando, setGuardando] = useState(false);
+  const [enviado, setEnviado] = useState(false);
+
   useEffect(() => {
     if (!caseId) return;
     getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId)).then(d => {
-      if (d.exists()) setCaso({ id: d.id, ...d.data() });
+      if (d.exists()) {
+        const data = { id: d.id, ...d.data() } as any;
+        setCaso(data);
+        setNotaInterna(data.nota_interna || '');
+        setDiagnostico(data.diagnostico || '');
+      }
     });
   }, [caseId]);
+
+  const handleValidarYNotificar = async () => {
+    if (!diagnostico.trim()) return;
+    setGuardando(true);
+    try {
+      await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), {
+        diagnostico, nota_interna: notaInterna,
+        estado: 'RESPONDIDA', fecha_respuesta: serverTimestamp()
+      });
+      setEnviado(true);
+      setCaso((prev: any) => ({ ...prev, estado: 'RESPONDIDA' }));
+    } catch (e) { console.error('Error:', e); }
+    setGuardando(false);
+  };
+
+  const handleGuardarNota = async () => {
+    setGuardando(true);
+    try {
+      await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), {
+        nota_interna: notaInterna, diagnostico
+      });
+    } catch (e) { console.error('Error:', e); }
+    setGuardando(false);
+  };
+
+  if (!caso) return <div style={styles.container}><p style={{ color: THEME.gray }}>Cargando ficha...</p></div>;
+
+  const tiempoTranscurrido = () => {
+    if (!caso.fecha_creacion) return '-';
+    const ahora = new Date();
+    const creacion = caso.fecha_creacion.toDate ? caso.fecha_creacion.toDate() : new Date(caso.fecha_creacion);
+    const horas = Math.floor((ahora.getTime() - creacion.getTime()) / (1000 * 60 * 60));
+    if (horas < 24) return horas + ' hs';
+    return Math.floor(horas / 24) + ' dias';
+  };
+
   return (
-    <div style={styles.container}>
-      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>{isDirectorView ? 'Vista Director' : 'Ficha Técnica'}</span></div>
-      <h2 style={styles.h2}>FICHA DE CONSULTA</h2>
-      <div style={{ ...styles.cardInfo, border: THEME.border }}>
-        <label style={styles.label}>USUARIO</label>
-        <p>{caso?.usuario_nombre} — {caso?.usuario_email}</p>
-        <label style={{ ...styles.label, marginTop: '15px' }}>INMUEBLE</label>
-        <p>{caso?.direccion_inmueble || '-'}</p>
-        <label style={{ ...styles.label, marginTop: '15px' }}>DESCRIPCIÓN</label>
-        <p>{caso?.descripcion || '-'}</p>
-        <label style={{ ...styles.label, marginTop: '15px' }}>ESTADO</label>
-        <p><strong>{caso?.estado || '-'}</strong></p>
+    <div style={{ ...styles.container, backgroundColor: THEME.background }}>
+      <div style={styles.engineeringHeader}>
+        <button onClick={onBack} style={styles.btnBack}>Volver</button>
+        <span>{isDirectorView ? 'Vista Director' : 'Ficha Tecnica'}</span>
+        {!isDirectorView && onAdvanced && (
+          <button onClick={onAdvanced} style={{ ...styles.btnPrimary, width: 'auto', padding: '8px 16px', fontSize: '11px' }}>
+            Bitacora
+          </button>
+        )}
       </div>
-      {!isDirectorView && onAdvanced && <button onClick={onAdvanced} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Abrir Tablero Técnico</button>}
+      <h2 style={styles.h2}>FICHA DE CONSULTA TECNICA</h2>
+      <p style={styles.subtitleBold}>Analisis de evidencia tecnica y validacion del diagnostico.</p>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '15px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <div style={{ ...styles.cardInfo, border: THEME.border }}>
+            <label style={styles.label}>DATOS DEL EXPEDIENTE</label>
+            <p style={{ fontWeight: 700, fontSize: '15px', margin: '0 0 4px 0' }}>{caso.usuario_nombre}</p>
+            <p style={{ fontSize: '13px', color: THEME.gray, margin: '0 0 2px 0' }}>{caso.usuario_email}</p>
+            {caso.usuario_telefono && <p style={{ fontSize: '13px', color: THEME.gray, margin: '0 0 10px 0' }}>{caso.usuario_telefono}</p>}
+            <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '5px' }}>
+              <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 4px 0' }}>INMUEBLE</p>
+              <p style={{ fontSize: '13px', margin: '0 0 10px 0' }}>{caso.direccion_inmueble || '-'}</p>
+            </div>
+            <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px' }}>
+              <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>DESCRIPCION</p>
+              <p style={{ fontSize: '14px', lineHeight: '1.6', fontStyle: 'italic', margin: 0 }}>"{caso.descripcion}"</p>
+            </div>
+            <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
+              <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 6px 0' }}>ESTADO</p>
+              <span style={{ fontSize: '11px', fontWeight: 900, padding: '4px 10px', borderRadius: '4px', backgroundColor: caso.estado === 'RESPONDIDA' ? '#E8F5E9' : caso.estado === 'EN ANALISIS' ? '#FFFDE7' : '#E3F2FD', color: caso.estado === 'RESPONDIDA' ? '#2E7D32' : caso.estado === 'EN ANALISIS' ? '#F57F17' : '#1565C0' }}>
+                {caso.estado}
+              </span>
+            </div>
+            {isDirectorView && (
+              <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 4px 0' }}>TIEMPO TRANSCURRIDO</p>
+                <p style={{ fontSize: '13px', margin: 0 }}>{tiempoTranscurrido()}</p>
+              </div>
+            )}
+            {isDirectorView && caso.arquitecto_nombre && (
+              <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 4px 0' }}>ARQUITECTO ASIGNADO</p>
+                <p style={{ fontSize: '13px', margin: 0 }}>{caso.arquitecto_nombre}</p>
+              </div>
+            )}
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <div style={{ ...styles.cardInfo, border: '2px solid #B21F24' }}>
+            <label style={{ ...styles.label, color: '#B21F24' }}>DIAGNOSTICO TECNICO PROFESIONAL</label>
+            {isDirectorView ? (
+              <p style={{ fontSize: '14px', lineHeight: '1.6', margin: 0, fontStyle: caso.diagnostico ? 'normal' : 'italic', color: caso.diagnostico ? '#1D1D1F' : '#6E6E73' }}>
+                {caso.diagnostico || 'Pendiente de diagnostico del arquitecto.'}
+              </p>
+            ) : (
+              <textarea
+                placeholder="Redacta el diagnostico tecnico profesional para el usuario..."
+                value={diagnostico}
+                onChange={e => setDiagnostico(e.target.value)}
+                style={{ ...styles.textareaBold, minHeight: '160px', borderColor: '#B21F24' }}
+                disabled={caso.estado === 'RESPONDIDA'}
+              />
+            )}
+          </div>
+          {!isDirectorView && (
+            <div style={{ ...styles.cardInfo, border: '2px solid #1D1D1F' }}>
+              <label style={styles.label}>NOTAS INTERNAS PRIVADAS</label>
+              <p style={{ fontSize: '11px', color: '#6E6E73', margin: '0 0 8px 0' }}>Estas notas NO son visibles para el usuario ni el Director.</p>
+              <textarea
+                placeholder="Notas internas profesionales (privadas)..."
+                value={notaInterna}
+                onChange={e => setNotaInterna(e.target.value)}
+                style={{ ...styles.textareaBold, minHeight: '100px' }}
+              />
+            </div>
+          )}
+          {!isDirectorView && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {enviado || caso.estado === 'RESPONDIDA' ? (
+                <div style={{ padding: '15px', backgroundColor: '#E8F5E9', border: '2px solid #2E7D32', borderRadius: '8px', textAlign: 'center' }}>
+                  <p style={{ color: '#2E7D32', fontWeight: 900, margin: 0 }}>Diagnostico validado y enviado al usuario</p>
+                </div>
+              ) : (
+                <>
+                  <button onClick={handleGuardarNota} disabled={guardando} style={{ backgroundColor: 'transparent', color: '#1D1D1F', border: '2px solid #1D1D1F', padding: '14px 28px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', borderRadius: '6px', opacity: guardando ? 0.7 : 1 }}>
+                    {guardando ? 'Guardando...' : 'Guardar borrador'}
+                  </button>
+                  <button onClick={handleValidarYNotificar} disabled={guardando || !diagnostico.trim()} style={{ backgroundColor: '#B21F24', color: '#FFFFFF', border: 'none', padding: '16px 32px', fontSize: '13px', fontWeight: 900, cursor: 'pointer', borderRadius: '6px', opacity: (guardando || !diagnostico.trim()) ? 0.7 : 1 }}>
+                    {guardando ? 'Enviando...' : 'VALIDAR Y NOTIFICAR AL USUARIO'}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
-
 function PanelB1Tablero({ caseId, onBack, onUserView }: any) {
   return (
     <div style={styles.container}>
