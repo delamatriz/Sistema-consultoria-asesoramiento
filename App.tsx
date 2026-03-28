@@ -72,9 +72,14 @@ export default function App() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       await setDoc(doc(db, 'Usuarios', user.uid), {
-        nombre, email, telefono, direccion,
-        rol: 'usuario', estudio_id: ESTUDIO_ID,
-        activo: true, fecha_registro: serverTimestamp()
+        nombre,
+        email,
+        telefono,
+        direccion,
+        rol: 'usuario',
+        estudio_id: ESTUDIO_ID,
+        activo: true,
+        fecha_registro: serverTimestamp()
       });
       setUserProfile({ nombre, email, telefono, direccion, rol: 'usuario', estudio_id: ESTUDIO_ID });
       navigate('user_home');
@@ -146,8 +151,8 @@ export default function App() {
     <div style={{ backgroundColor: THEME.background, minHeight: '100vh', fontFamily: THEME.fontFamily, color: THEME.text }}>
       <header style={styles.header}>
         <div style={styles.logo} onClick={() => navigate('user_home')}>
-          <div style={styles.isotipo}></div>
-          <span style={styles.logoText}>DE LA MATRIZ <span style={{ fontWeight: 300 }}>ARQUITECTOS</span></span>
+<img src="/Logo_fondo_transparente.png" alt="De La Matriz" style={{ height: '60px', width: 'auto', mixBlendMode: 'multiply' }} />
+
         </div>
         <button onClick={() => setMenuOpen(!menuOpen)} style={styles.btnMenu}>{menuOpen ? '✕' : '☰'}</button>
         {menuOpen && (
@@ -187,7 +192,7 @@ function ScreenRegistro({ onRegister, onLogin, error }: any) {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!nombre || !email || !password) return;
+    if (!nombre || !email || !password) { return; }
     setLoading(true);
     await onRegister(nombre, email, password, telefono, direccion);
     setLoading(false);
@@ -268,7 +273,7 @@ function ScreenRecuperar({ onBack }: any) {
       <h2 style={styles.h2}>RECUPERAR CONTRASEÑA</h2>
       {sent ? (
         <div style={{ ...styles.cardInfo, border: THEME.border }}>
-          <p style={{ color: '#2E7D32', fontWeight: 700 }}>✅ Te enviamos un email para restablecer tu contraseña.</p>
+          <p style={{ color: '#2E7D32', fontWeight: 700 }}>✅ Te enviamos un email con las instrucciones para restablecer tu contraseña.</p>
         </div>
       ) : (
         <div style={{ ...styles.cardInfo, border: THEME.border }}>
@@ -300,7 +305,7 @@ function ScreenHome({ onStart, onHow, userProfile }: any) {
   );
 }
 
-// --- PANTALLA COMO FUNCIONA ---
+// --- PANTALLA CÓMO FUNCIONA ---
 function ScreenComoFunciona({ onNext }: any) {
   return (
     <div style={styles.container}>
@@ -328,7 +333,7 @@ function ScreenComoFunciona({ onNext }: any) {
   );
 }
 
-// --- PANTALLA QUIENES SOMOS ---
+// --- PANTALLA QUIÉNES SOMOS ---
 function ScreenQuienesSomos({ onBack }: any) {
   return (
     <div style={styles.container}>
@@ -492,10 +497,7 @@ function ScreenDetalle({ caseId, onBack, onEscalate }: any) {
 
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
-        <button onClick={onBack} style={styles.btnBack}>← Volver</button>
-        <span>Expediente Técnico Profesional</span>
-      </div>
+      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Expediente Técnico Profesional</span></div>
       <h2 style={styles.h2}>RESPUESTA DE LA CONSULTA</h2>
       <div style={{ ...styles.cardInfo, border: THEME.border }}>
         <label style={styles.label}>DESCRIPCIÓN ORIGINAL</label>
@@ -534,7 +536,9 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
   const [seleccionado, setSeleccionado] = useState<string | null>(null);
   const [asignando, setAsignando] = useState(false);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -542,10 +546,18 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
       const snapshot = await getDocs(casosRef);
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       setCasos(data);
-      const arqQuery = query(collection(db, 'Usuarios'), where('rol', '==', 'arquitecto'), where('estudio_id', '==', ESTUDIO_ID));
+
+      const arqQuery = query(
+        collection(db, 'Usuarios'),
+        where('rol', '==', 'arquitecto'),
+        where('estudio_id', '==', ESTUDIO_ID)
+      );
       const arqSnap = await getDocs(arqQuery);
-      setArquitectos(arqSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-    } catch (e) { console.error('Error:', e); }
+      const arqData = arqSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setArquitectos(arqData);
+    } catch (e) {
+      console.error('Error cargando datos:', e);
+    }
     setLoading(false);
   };
 
@@ -553,14 +565,21 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
     if (!seleccionado) return;
     setAsignando(true);
     try {
-      await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', seleccionado), {
+      const casoRef = doc(db, 'Estudios', ESTUDIO_ID, 'Casos', seleccionado);
+      await updateDoc(casoRef, {
         arquitecto_asignado: arquitectoId,
         arquitecto_nombre: arquitectoNombre,
         estado: 'EN ANÁLISIS'
       });
-      setCasos(prev => prev.map(c => c.id === seleccionado ? { ...c, arquitecto_asignado: arquitectoId, arquitecto_nombre: arquitectoNombre, estado: 'EN ANÁLISIS' } : c));
+      setCasos(prev => prev.map(c =>
+        c.id === seleccionado
+          ? { ...c, arquitecto_asignado: arquitectoId, arquitecto_nombre: arquitectoNombre, estado: 'EN ANÁLISIS' }
+          : c
+      ));
       setSeleccionado(null);
-    } catch (e) { console.error('Error:', e); }
+    } catch (e) {
+      console.error('Error asignando:', e);
+    }
     setAsignando(false);
   };
 
@@ -602,8 +621,11 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
                     <span style={{ fontSize: '10px', fontWeight: 900, color: colors.text, border: `1px solid ${colors.text}`, padding: '4px 8px', borderRadius: '4px', whiteSpace: 'nowrap' }}>{c.estado}</span>
-                    <button onClick={() => setSeleccionado(c.id)} style={{ fontSize: '10px', fontWeight: 900, backgroundColor: THEME.primary, color: THEME.white, border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>
-                      {c.arquitecto_asignado ? 'CAMBIAR ARQUITECTO' : 'ASIGNAR'}
+                    <button
+                      onClick={() => setSeleccionado(c.id)}
+                      style={{ fontSize: '10px', fontWeight: 900, backgroundColor: THEME.primary, color: THEME.white, border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                      {c.arquitecto_asignado ? 'REASIGNAR' : 'ASIGNAR'}
                     </button>
                     {c.arquitecto_nombre && <span style={{ fontSize: '10px', color: THEME.gray }}>{c.arquitecto_nombre}</span>}
                   </div>
@@ -613,21 +635,30 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
           })}
         </div>
       )}
+
+      {/* Modal de Asignación */}
       {seleccionado && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
           <div style={{ backgroundColor: THEME.white, padding: '35px', borderRadius: '12px', width: '90%', maxWidth: '420px', border: THEME.border }}>
             <h3 style={{ margin: '0 0 8px 0', fontWeight: 900 }}>ASIGNAR ARQUITECTO</h3>
             <p style={{ color: THEME.gray, fontSize: '13px', marginBottom: '25px' }}>Seleccioná el profesional responsable para este caso.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {arquitectos.length === 0 ? <p style={{ color: THEME.gray }}>No hay arquitectos registrados.</p> :
-                arquitectos.map(arq => (
-                  <button key={arq.id} onClick={() => asignarArquitecto(arq.id, arq.nombre)} disabled={asignando}
-                    style={{ padding: '15px 20px', textAlign: 'left', border: THEME.border, borderRadius: '8px', cursor: 'pointer', background: THEME.white, fontSize: '14px', fontWeight: 700, opacity: asignando ? 0.7 : 1 }}>
-                    {arq.nombre}
-                    <span style={{ display: 'block', fontSize: '11px', color: THEME.gray, fontWeight: 400, marginTop: '3px' }}>{arq.email}</span>
-                  </button>
-                ))}
-              <button onClick={() => setSeleccionado(null)} style={{ marginTop: '10px', border: 'none', background: 'none', color: THEME.gray, cursor: 'pointer', fontSize: '13px' }}>Cancelar</button>
+              {arquitectos.length === 0 ? (
+                <p style={{ color: THEME.gray, textAlign: 'center' }}>No hay arquitectos registrados.</p>
+              ) : arquitectos.map(arq => (
+                <button
+                  key={arq.id}
+                  onClick={() => asignarArquitecto(arq.id, arq.nombre)}
+                  disabled={asignando}
+                  style={{ padding: '15px 20px', textAlign: 'left', border: THEME.border, borderRadius: '8px', cursor: 'pointer', background: THEME.white, fontSize: '14px', fontWeight: 700, opacity: asignando ? 0.7 : 1 }}
+                >
+                  {arq.nombre}
+                  <span style={{ display: 'block', fontSize: '11px', color: THEME.gray, fontWeight: 400, marginTop: '3px' }}>{arq.email}</span>
+                </button>
+              ))}
+              <button onClick={() => setSeleccionado(null)} style={{ marginTop: '10px', border: 'none', background: 'none', color: THEME.gray, cursor: 'pointer', fontSize: '13px' }}>
+                Cancelar
+              </button>
             </div>
           </div>
         </div>
@@ -672,7 +703,6 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout }: any) {
             <div key={c.id} style={{ ...styles.itemCase, border: THEME.border }} onClick={() => onCase(c.id)}>
               <strong>{c.usuario_nombre || 'Usuario'}</strong>
               <p style={{ fontSize: '12px', color: THEME.gray, marginTop: '3px' }}>{c.descripcion?.substring(0, 60)}...</p>
-              <p style={{ fontSize: '11px', color: THEME.gray, marginTop: '3px' }}>{c.direccion_inmueble}</p>
               <span style={{ fontSize: '10px', fontWeight: 900, color: THEME.primary }}>{c.estado}</span>
             </div>
           ))}
@@ -682,429 +712,7 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout }: any) {
   );
 }
 
-// --- PANEL FICHA TECNICA ---
-function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
-  const [caso, setCaso] = useState<any>(null);
-  const [notaInterna, setNotaInterna] = useState('');
-  const [diagnostico, setDiagnostico] = useState('');
-  const [guardando, setGuardando] = useState(false);
-  const [enviado, setEnviado] = useState(false);
-
-  useEffect(() => {
-    if (!caseId) return;
-    getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId)).then(d => {
-      if (d.exists()) {
-        const data = { id: d.id, ...d.data() } as any;
-        setCaso(data);
-        setNotaInterna(data.nota_interna || '');
-        setDiagnostico(data.diagnostico || '');
-      }
-    });
-  }, [caseId]);
-
-  const handleValidarYNotificar = async () => {
-    if (!diagnostico.trim()) return;
-    setGuardando(true);
-    try {
-      await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), {
-        diagnostico,
-        nota_interna: notaInterna,
-        estado: 'RESPONDIDA',
-        fecha_respuesta: serverTimestamp()
-      });
-      setEnviado(true);
-      setCaso((prev: any) => ({ ...prev, estado: 'RESPONDIDA' }));
-    } catch (e) { console.error('Error:', e); }
-    setGuardando(false);
-  };
-
-  const handleGuardarNota = async () => {
-    setGuardando(true);
-    try {
-      await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), {
-        nota_interna: notaInterna,
-        diagnostico
-      });
-    } catch (e) { console.error('Error:', e); }
-    setGuardando(false);
-  };
-
-  if (!caso) return <div style={styles.container}><p style={{ color: THEME.gray }}>Cargando ficha...</p></div>;
-
-  return (
-    <div style={{ ...styles.container, backgroundColor: THEME.background }}>
-      <div style={styles.engineeringHeader}>
-        <button onClick={onBack} style={styles.btnBack}>← Volver</button>
-        <span>{isDirectorView ? 'Vista Director' : 'Ficha Técnica'}</span>
-        {!isDirectorView && onAdvanced && (
-          <button onClick={onAdvanced} style={{ ...styles.btnPrimary, width: 'auto', padding: '8px 16px', fontSize: '11px' }}>
-            Bitácora de Supervisión
-          </button>
-        )}
-      </div>
-      <h2 style={styles.h2}>FICHA DE CONSULTA TÉCNICA</h2>
-      <p style={styles.subtitleBold}>Análisis de evidencia técnica y validación profesional del diagnóstico.</p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '15px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <div style={{ ...styles.cardInfo, border: THEME.border }}>
-            <label style={styles.label}>DATOS DEL EXPEDIENTE</label>
-            <p style={{ fontWeight: 700, fontSize: '15px', margin: '0 0 4px 0' }}>{caso.usuario_nombre}</p>
-            <p style={{ fontSize: '13px', color: THEME.gray, margin: '0 0 2px 0' }}>{caso.usuario_email}</p>
-            {caso.usuario_telefono && <p style={{ fontSize: '13px', color: THEME.gray, margin: '0 0 10px 0' }}>{caso.usuario_telefono}</p>}
-            <div style={{ borderTop: `1px solid ${THEME.softGray}`, paddingTop: '10px', marginTop: '5px' }}>
-              <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 4px 0' }}>INMUEBLE</p>
-              <p style={{ fontSize: '13px', margin: '0 0 10px 0' }}>{caso.direccion_inmueble || '-'}</p>
-            </div>
-            <div style={{ borderTop: `1px solid ${THEME.softGray}`, paddingTop: '10px' }}>
-              <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>DESCRIPCIÓN DEL PROBLEMA</p>
-              <p style={{ fontSize: '14px', lineHeight: '1.6', fontStyle: 'italic', margin: 0 }}>"{caso.descripcion}"</p>
-            </div>
-            <div style={{ borderTop: `1px solid ${THEME.softGray}`, paddingTop: '10px', marginTop: '10px' }}>
-              <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 6px 0' }}>ESTADO</p>
-              <span style={{ fontSize: '11px', fontWeight: 900, padding: '4px 10px', borderRadius: '4px', backgroundColor: caso.estado === 'RESPONDIDA' ? '#E8F5E9' : caso.estado === 'EN ANÁLISIS' ? '#FFFDE7' : '#E3F2FD', color: caso.estado === 'RESPONDIDA' ? '#2E7D32' : caso.estado === 'EN ANÁLISIS' ? '#F57F17' : '#1565C0' }}>
-                {caso.estado}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <div style={{ ...styles.cardInfo, border: `2px solid ${THEME.primary}` }}>
-            <label style={{ ...styles.label, color: THEME.primary }}>DIAGNÓSTICO TÉCNICO PROFESIONAL</label>
-            {isDirectorView ? (
-              <p style={{ fontSize: '14px', lineHeight: '1.6', margin: 0 }}>{caso.diagnostico || 'Pendiente de diagnóstico.'}</p>
-            ) : (
-              <textarea
-                placeholder="Redactá el diagnóstico técnico profesional para el usuario..."
-                value={diagnostico}
-                onChange={e => setDiagnostico(e.target.value)}
-                style={{ ...styles.textareaBold, minHeight: '160px', borderColor: THEME.primary }}
-                disabled={caso.estado === 'RESPONDIDA'}
-              />
-            )}
-          </div>
-          <div style={{ ...styles.cardInfo, border: THEME.border }}>
-            <label style={styles.label}>NOTAS INTERNAS PRIVADAS</label>
-            <p style={{ fontSize: '11px', color: THEME.gray, margin: '0 0 8px 0' }}>Estas notas NO son visibles para el usuario.</p>
-            {isDirectorView ? (
-              <p style={{ fontSize: '13px', color: THEME.gray, fontStyle: 'italic', margin: 0 }}>{caso.nota_interna || 'Sin notas internas.'}</p>
-            ) : (
-              <textarea
-                placeholder="Notas internas profesionales (privadas)..."
-                value={notaInterna}
-                onChange={e => setNotaInterna(e.target.value)}
-                style={{ ...styles.textareaBold, minHeight: '100px' }}
-              />
-            )}
-          </div>
-          {!isDirectorView && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {enviado || caso.estado === 'RESPONDIDA' ? (
-                <div style={{ padding: '15px', backgroundColor: '#E8F5E9', border: '2px solid #2E7D32', borderRadius: '8px', textAlign: 'center' }}>
-                  <p style={{ color: '#2E7D32', fontWeight: 900, margin: 0 }}>✅ Diagnóstico validado y enviado al usuario</p>
-                </div>
-              ) : (
-                <>
-                  <button onClick={handleGuardarNota} disabled={guardando} style={{ ...styles.btnSecondaryOutline, opacity: guardando ? 0.7 : 1 }}>
-                    {guardando ? 'Guardando...' : 'Guardar borrador'}
-                  </button>
-                  <button onClick={handleValidarYNotificar} disabled={guardando || !diagnostico.trim()} style={{ ...styles.btnPrimary, opacity: (guardando || !diagnostico.trim()) ? 0.7 : 1 }}>
-                    {guardando ? 'Enviando...' : 'VALIDAR Y NOTIFICAR AL USUARIO'}
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- PANEL TABLERO TECNICO ---
-function PanelB1Tablero({ caseId, onBack, onUserView }: any) {
-  const [caso, setCaso] = useState<any>(null);
-  const [notaBitacora, setNotaBitacora] = useState('');
-  const [informeUsuario, setInformeUsuario] = useState('');
-  const [guardando, setGuardando] = useState(false);
-  const [publicado, setPublicado] = useState(false);
-
-  useEffect(() => {
-    if (!caseId) return;
-    getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId)).then(d => {
-      if (d.exists()) {
-        const data = { id: d.id, ...d.data() } as any;
-        setCaso(data);
-        setNotaBitacora(data.nota_bitacora || '');
-        setInformeUsuario(data.informe_usuario || '');
-      }
-    });
-  }, [caseId]);
-
-  const handleGuardarBitacora = async () => {
-    setGuardando(true);
-    try {
-      await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), {
-        nota_bitacora: notaBitacora
-      });
-    } catch (e) { console.error('Error:', e); }
-    setGuardando(false);
-  };
-
-  const handlePublicarInforme = async () => {
-    if (!informeUsuario.trim()) return;
-    setGuardando(true);
-    try {
-      await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), {
-        informe_usuario: informeUsuario,
-        nota_bitacora: notaBitacora,
-        estado: 'RESPONDIDA',
-        fecha_informe: serverTimestamp()
-      });
-      setPublicado(true);
-    } catch (e) { console.error('Error:', e); }
-    setGuardando(false);
-  };
-
-  if (!caso) return <div style={styles.container}><p style={{ color: THEME.gray }}>Cargando bitácora...</p></div>;
-
-  return (
-    <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
-        <button onClick={onBack} style={styles.btnBack}>← Volver</button>
-        <span>Bitácora de Supervisión</span>
-      </div>
-      <h2 style={styles.h2}>CONTROL TÉCNICO · SUPERVISIÓN</h2>
-      <p style={styles.subtitleBold}>Registro de hitos de obra y comunicación con el usuario.</p>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '15px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <div style={{ ...styles.cardInfo, border: THEME.border }}>
-            <label style={styles.label}>EXPEDIENTE DEL CLIENTE</label>
-            <p style={{ fontWeight: 700, margin: '0 0 4px 0' }}>{caso.usuario_nombre}</p>
-            <p style={{ fontSize: '13px', color: THEME.gray, margin: 0 }}>{caso.direccion_inmueble}</p>
-          </div>
-          <div style={{ ...styles.cardInfo, border: THEME.border }}>
-            <label style={styles.label}>NOTAS INTERNAS DE BITÁCORA</label>
-            <p style={{ fontSize: '11px', color: THEME.gray, margin: '0 0 8px 0' }}>Registro privado de hitos técnicos. No visible para el usuario.</p>
-            <textarea
-              placeholder="Bitácora privada de hitos técnicos de obra..."
-              value={notaBitacora}
-              onChange={e => setNotaBitacora(e.target.value)}
-              style={{ ...styles.textareaBold, minHeight: '150px' }}
-            />
-            <button onClick={handleGuardarBitacora} disabled={guardando} style={{ ...styles.btnSecondaryOutline, marginTop: '10px', opacity: guardando ? 0.7 : 1 }}>
-              {guardando ? 'Guardando...' : 'Guardar notas'}
-            </button>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <div style={{ ...styles.cardInfo, border: THEME.border }}>
-            <label style={styles.label}>GESTIÓN DOCUMENTAL</label>
-            <button style={{ ...styles.btnPrimary, marginBottom: '10px' }}>
-              📎 Subir Documentación Técnica
-            </button>
-            <p style={{ fontSize: '11px', color: THEME.gray, textAlign: 'center' }}>PDF, planos, informes técnicos</p>
-          </div>
-          <div style={{ ...styles.cardInfo, border: `2px solid ${THEME.primary}` }}>
-            <label style={{ ...styles.label, color: THEME.primary }}>INFORME DE ACTUACIÓN PARA EL USUARIO</label>
-            {publicado ? (
-              <div style={{ padding: '15px', backgroundColor: '#E8F5E9', borderRadius: '8px', textAlign: 'center' }}>
-                <p style={{ color: '#2E7D32', fontWeight: 900, margin: 0 }}>✅ Informe publicado al usuario</p>
-              </div>
-            ) : (
-              <>
-                <textarea
-                  placeholder="Este informe será visible para el usuario en su historial de consultas..."
-                  value={informeUsuario}
-                  onChange={e => setInformeUsuario(e.target.value)}
-                  style={{ ...styles.textareaBold, minHeight: '120px', borderColor: THEME.primary }}
-                />
-                <button
-                  onClick={handlePublicarInforme}
-                  disabled={guardando || !informeUsuario.trim()}
-                  style={{ ...styles.btnPrimary, marginTop: '10px', opacity: (guardando || !informeUsuario.trim()) ? 0.7 : 1 }}
-                >
-                  {guardando ? 'Publicando...' : 'PUBLICAR INFORME AL USUARIO'}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- PANEL CONSULTAS DIRECTOR ---
-function PanelGConsultas({ onCase, onBack }: any) {
-  const [casos, setCasos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCasos = async () => {
-      const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
-      const snapshot = await getDocs(casosRef);
-      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      setCasos(data);
-      setLoading(false);
-    };
-    fetchCasos();
-  }, []);
-
-  const getColor = (estado: string) => {
-    if (estado === 'RESPONDIDA') return { bg: '#E8F5E9', text: '#2E7D32' };
-    if (estado === 'EN ANÁLISIS') return { bg: '#FFFDE7', text: '#F57F17' };
-    if (estado === 'NUEVO') return { bg: '#E3F2FD', text: '#1565C0' };
-    return { bg: '#F5F5F7', text: '#B21F24' };
-  };
-
-  return (
-    <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
-        <button onClick={onBack} style={styles.btnBack}>← Volver</button>
-        <span>Historial Global</span>
-      </div>
-      <h2 style={styles.h2}>TODAS LAS CONSULTAS</h2>
-      {loading ? <p style={{ color: THEME.gray }}>Cargando...</p> : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          {casos.length === 0 ? (
-            <p style={{ color: THEME.gray }}>No hay consultas registradas aún.</p>
-          ) : casos.map(c => {
-            const colors = getColor(c.estado);
-            return (
-              <div key={c.id} style={{ ...styles.itemCase, border: THEME.border, backgroundColor: colors.bg }} onClick={() => onCase(c.id)}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <strong>{c.usuario_nombre || 'Usuario'}</strong>
-                    <p style={{ fontSize: '12px', color: THEME.gray, margin: '3px 0' }}>{c.descripcion?.substring(0, 60)}...</p>
-                    <p style={{ fontSize: '11px', color: THEME.gray, margin: 0 }}>{c.direccion_inmueble}</p>
-                  </div>
-                  <span style={{ fontSize: '10px', fontWeight: 900, color: colors.text, border: `1px solid ${colors.text}`, padding: '4px 8px', borderRadius: '4px', whiteSpace: 'nowrap' }}>{c.estado}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// --- PANEL CONFIGURACION ---
-function PanelEConfiguracion({ onBack, onTeam }: any) {
-  return (
-    <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
-        <button onClick={onBack} style={styles.btnBack}>← Volver</button>
-        <span>Configuración</span>
-      </div>
-      <h2 style={styles.h2}>CONFIGURACIÓN DEL ESTUDIO</h2>
-      <div style={{ ...styles.cardInfo, border: THEME.border }}>
-        <p style={{ color: THEME.gray }}>Configuración de precios y parámetros del estudio — próximamente.</p>
-      </div>
-      <button onClick={onTeam} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Gestión de Equipo</button>
-    </div>
-  );
-}
-
-// --- PANEL GESTION EQUIPO ---
-function PanelFGestionEquipo({ estudioId, onBack, onAssignAction }: any) {
-  const [arquitectos, setArquitectos] = useState<any[]>([]);
-  const [casos, setCasos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [emailInvitacion, setEmailInvitacion] = useState('');
-  const [nombreInvitacion, setNombreInvitacion] = useState('');
-  const [enviando, setEnviando] = useState(false);
-  const [mensaje, setMensaje] = useState('');
-
-  useEffect(() => { fetchData(); }, []);
-
-  const fetchData = async () => {
-    try {
-      const arqQuery = query(collection(db, 'Usuarios'), where('rol', '==', 'arquitecto'), where('estudio_id', '==', estudioId));
-      const arqSnap = await getDocs(arqQuery);
-      setArquitectos(arqSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-      const casosSnap = await getDocs(collection(db, 'Estudios', estudioId, 'Casos'));
-      setCasos(casosSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-    } catch (e) { console.error('Error:', e); }
-    setLoading(false);
-  };
-
-  const getCasosCount = (arquitectoId: string) => casos.filter(c => c.arquitecto_asignado === arquitectoId && c.estado !== 'RESPONDIDA').length;
-
-  const handleInvitar = async () => {
-    if (!emailInvitacion || !nombreInvitacion) { setMensaje('Por favor completá nombre y email.'); return; }
-    setEnviando(true);
-    try {
-      const { createUserWithEmailAndPassword } = await import('firebase/auth');
-      const tempPassword = 'Temp' + Math.random().toString(36).slice(2, 8) + '!';
-      const userCredential = await createUserWithEmailAndPassword(auth, emailInvitacion, tempPassword);
-      await setDoc(doc(db, 'Usuarios', userCredential.user.uid), {
-        nombre: nombreInvitacion, email: emailInvitacion,
-        rol: 'arquitecto', estudio_id: estudioId,
-        activo: true, fecha_registro: serverTimestamp()
-      });
-      setMensaje(`✅ Arquitecto agregado. Contraseña temporal: ${tempPassword}`);
-      setEmailInvitacion('');
-      setNombreInvitacion('');
-      fetchData();
-    } catch (e: any) {
-      if (e.code === 'auth/email-already-in-use') setMensaje('❌ Ese email ya está registrado en el sistema.');
-      else setMensaje('❌ Error al agregar el arquitecto. Intentá de nuevo.');
-    }
-    setEnviando(false);
-  };
-
-  return (
-    <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
-        <button onClick={onBack} style={styles.btnBack}>← Dashboard</button>
-        <span>Equipo Técnico</span>
-      </div>
-      <h2 style={styles.h2}>EQUIPO TÉCNICO · ADMINISTRACIÓN</h2>
-      <p style={styles.subtitleBold}>Control de capital profesional, roles y carga operativa.</p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
-        <div style={{ ...styles.cardInfo, border: THEME.border }}>
-          <label style={styles.label}>GESTIÓN DE CARGA PROFESIONAL</label>
-          {loading ? <p style={{ color: THEME.gray }}>Cargando equipo...</p> : arquitectos.length === 0 ? (
-            <p style={{ color: THEME.gray, fontSize: '13px' }}>No hay arquitectos registrados aún.</p>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
-              {arquitectos.map(arq => (
-                <div key={arq.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', border: `1px solid ${THEME.softGray}`, borderRadius: '8px' }}>
-                  <div>
-                    <strong style={{ fontSize: '14px' }}>{arq.nombre}</strong>
-                    <p style={{ fontSize: '12px', color: THEME.gray, margin: '3px 0 0 0' }}>{getCasosCount(arq.id)} casos activos</p>
-                    <p style={{ fontSize: '11px', color: THEME.gray, margin: '2px 0 0 0' }}>{arq.email}</p>
-                  </div>
-                  <button onClick={onAssignAction} style={{ ...styles.btnPrimary, width: 'auto', padding: '10px 16px', fontSize: '11px' }}>
-                    Asignar al caso
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <div style={{ ...styles.cardInfo, border: THEME.border }}>
-          <label style={styles.label}>AGREGAR ARQUITECTO AL ESTUDIO</label>
-          <p style={{ fontSize: '13px', color: THEME.gray, marginBottom: '20px' }}>Sumá profesionales al equipo del estudio.</p>
-          <input placeholder="Nombre completo del Arquitecto" value={nombreInvitacion} onChange={e => setNombreInvitacion(e.target.value)} style={{ ...styles.inputFieldBold, marginBottom: '10px' }} />
-          <input placeholder="Email del Arquitecto" type="email" value={emailInvitacion} onChange={e => setEmailInvitacion(e.target.value)} style={{ ...styles.inputFieldBold, marginBottom: '20px' }} />
-          {mensaje && (
-            <div style={{ padding: '12px', backgroundColor: mensaje.startsWith('✅') ? '#E8F5E9' : '#FFEBEE', borderRadius: '6px', marginBottom: '15px', fontSize: '13px', color: mensaje.startsWith('✅') ? '#2E7D32' : THEME.primary }}>
-              {mensaje}
-            </div>
-          )}
-          <button onClick={handleInvitar} disabled={enviando} style={{ ...styles.btnPrimary, opacity: enviando ? 0.7 : 1 }}>
-            {enviando ? 'Agregando...' : 'AGREGAR AL ESTUDIO'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// --- PANTALLAS USUARIO RESTANTES ---
+// --- PANTALLAS RESTANTES SIN CAMBIOS ---
 function ScreenOpciones({ onSelect, onBack }: any) {
   const options = [
     { id: 'video', title: 'Video Consulta Técnica', price: '$4.500', desc: 'Aclaración de dudas en tiempo real mediante videollamada.' },
@@ -1220,13 +828,250 @@ function ScreenSeguimiento({ caseId, onBack, onActuaciones }: any) {
   );
 }
 
+function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
+  const [caso, setCaso] = useState<any>(null);
+  useEffect(() => {
+    if (!caseId) return;
+    getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId)).then(d => {
+      if (d.exists()) setCaso({ id: d.id, ...d.data() });
+    });
+  }, [caseId]);
+  return (
+    <div style={styles.container}>
+      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>{isDirectorView ? 'Vista Director' : 'Ficha Técnica'}</span></div>
+      <h2 style={styles.h2}>FICHA DE CONSULTA</h2>
+      <div style={{ ...styles.cardInfo, border: THEME.border }}>
+        <label style={styles.label}>USUARIO</label>
+        <p>{caso?.usuario_nombre} — {caso?.usuario_email}</p>
+        <label style={{ ...styles.label, marginTop: '15px' }}>INMUEBLE</label>
+        <p>{caso?.direccion_inmueble || '-'}</p>
+        <label style={{ ...styles.label, marginTop: '15px' }}>DESCRIPCIÓN</label>
+        <p>{caso?.descripcion || '-'}</p>
+        <label style={{ ...styles.label, marginTop: '15px' }}>ESTADO</label>
+        <p><strong>{caso?.estado || '-'}</strong></p>
+      </div>
+      {!isDirectorView && onAdvanced && <button onClick={onAdvanced} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Abrir Tablero Técnico</button>}
+    </div>
+  );
+}
+
+function PanelB1Tablero({ caseId, onBack, onUserView }: any) {
+  return (
+    <div style={styles.container}>
+      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Tablero Técnico</span></div>
+      <h2 style={styles.h2}>TABLERO DE SUPERVISIÓN</h2>
+      <div style={{ ...styles.cardInfo, border: THEME.border }}>
+        <p style={{ color: THEME.gray }}>Módulo de supervisión técnica — en desarrollo.</p>
+      </div>
+    </div>
+  );
+}
+
+function PanelGConsultas({ onCase, onBack }: any) {
+  const [casos, setCasos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCasos = async () => {
+      const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
+      const snapshot = await getDocs(casosRef);
+      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      setCasos(data);
+      setLoading(false);
+    };
+    fetchCasos();
+  }, []);
+
+  return (
+    <div style={styles.container}>
+      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Historial Global</span></div>
+      <h2 style={styles.h2}>TODAS LAS CONSULTAS</h2>
+      {loading ? <p style={{ color: THEME.gray }}>Cargando...</p> : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          {casos.length === 0 ? (
+            <p style={{ color: THEME.gray }}>No hay consultas registradas aún.</p>
+          ) : casos.map(c => (
+            <div key={c.id} style={{ ...styles.itemCase, border: THEME.border }} onClick={() => onCase(c.id)}>
+              <strong>{c.usuario_nombre || 'Usuario'}</strong>
+              <p style={{ fontSize: '12px', color: THEME.gray }}>{c.descripcion?.substring(0, 60)}...</p>
+              <span style={{ fontSize: '10px', fontWeight: 900, color: THEME.primary }}>{c.estado}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PanelEConfiguracion({ onBack, onTeam }: any) {
+  return (
+    <div style={styles.container}>
+      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Configuración</span></div>
+      <h2 style={styles.h2}>CONFIGURACIÓN DEL ESTUDIO</h2>
+      <div style={{ ...styles.cardInfo, border: THEME.border }}>
+        <p style={{ color: THEME.gray }}>Configuración de precios y parámetros del estudio — próximamente.</p>
+      </div>
+      <button onClick={onTeam} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Gestión de Equipo</button>
+    </div>
+  );
+}
+
+function PanelFGestionEquipo({ estudioId, onBack, onAssignAction }: any) {
+  const [arquitectos, setArquitectos] = useState<any[]>([]);
+  const [casos, setCasos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [emailInvitacion, setEmailInvitacion] = useState('');
+  const [nombreInvitacion, setNombreInvitacion] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [mensaje, setMensaje] = useState('');
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const arqQuery = query(
+        collection(db, 'Usuarios'),
+        where('rol', '==', 'arquitecto'),
+        where('estudio_id', '==', estudioId)
+      );
+      const arqSnap = await getDocs(arqQuery);
+      const arqData = arqSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setArquitectos(arqData);
+
+      const casosRef = collection(db, 'Estudios', estudioId, 'Casos');
+      const casosSnap = await getDocs(casosRef);
+      const casosData = casosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setCasos(casosData);
+    } catch (e) {
+      console.error('Error:', e);
+    }
+    setLoading(false);
+  };
+
+  const getCasosCount = (arquitectoId: string) => {
+    return casos.filter(c => c.arquitecto_asignado === arquitectoId && c.estado !== 'RESPONDIDA').length;
+  };
+
+  const handleInvitar = async () => {
+    if (!emailInvitacion || !nombreInvitacion) {
+      setMensaje('Por favor completá nombre y email.');
+      return;
+    }
+    setEnviando(true);
+    try {
+      const { createUserWithEmailAndPassword } = await import('firebase/auth');
+      const tempPassword = 'Temp' + Math.random().toString(36).slice(2, 8) + '!';
+      const userCredential = await createUserWithEmailAndPassword(auth, emailInvitacion, tempPassword);
+      await setDoc(doc(db, 'Usuarios', userCredential.user.uid), {
+        nombre: nombreInvitacion,
+        email: emailInvitacion,
+        rol: 'arquitecto',
+        estudio_id: estudioId,
+        activo: true,
+        fecha_registro: serverTimestamp()
+      });
+      setMensaje(`✅ Arquitecto ${nombreInvitacion} agregado. Contraseña temporal: ${tempPassword}`);
+      setEmailInvitacion('');
+      setNombreInvitacion('');
+      fetchData();
+    } catch (e: any) {
+      if (e.code === 'auth/email-already-in-use') {
+        setMensaje('❌ Ese email ya está registrado en el sistema.');
+      } else {
+        setMensaje('❌ Error al agregar el arquitecto. Intentá de nuevo.');
+      }
+    }
+    setEnviando(false);
+  };
+
+  return (
+    <div style={styles.container}>
+      <div style={styles.engineeringHeader}>
+        <button onClick={onBack} style={styles.btnBack}>← Dashboard</button>
+        <span>Equipo Técnico</span>
+      </div>
+      <h2 style={styles.h2}>EQUIPO TÉCNICO · ADMINISTRACIÓN</h2>
+      <p style={styles.subtitleBold}>Control de capital profesional, roles y carga operativa.</p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+
+        {/* Izquierda — Gestión de carga */}
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <label style={styles.label}>GESTIÓN DE CARGA PROFESIONAL</label>
+          {loading ? (
+            <p style={{ color: THEME.gray }}>Cargando equipo...</p>
+          ) : arquitectos.length === 0 ? (
+            <p style={{ color: THEME.gray, fontSize: '13px' }}>No hay arquitectos registrados aún.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
+              {arquitectos.map(arq => (
+                <div key={arq.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', border: `1px solid ${THEME.softGray}`, borderRadius: '8px' }}>
+                  <div>
+                    <strong style={{ fontSize: '14px' }}>{arq.nombre}</strong>
+                    <p style={{ fontSize: '12px', color: THEME.gray, margin: '3px 0 0 0' }}>
+                      {getCasosCount(arq.id)} caso{getCasosCount(arq.id) !== 1 ? 's' : ''} activo{getCasosCount(arq.id) !== 1 ? 's' : ''}
+                    </p>
+                    <p style={{ fontSize: '11px', color: THEME.gray, margin: '2px 0 0 0' }}>{arq.email}</p>
+                  </div>
+                  <button
+                    onClick={onAssignAction}
+                    style={{ ...styles.btnPrimary, width: 'auto', padding: '10px 16px', fontSize: '11px' }}
+                  >
+                    Asignar al caso
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Derecha — Invitación */}
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <label style={styles.label}>AGREGAR ARQUITECTO AL ESTUDIO</label>
+          <p style={{ fontSize: '13px', color: THEME.gray, marginBottom: '20px' }}>
+            Sumá profesionales al equipo del estudio.
+          </p>
+          <input
+            placeholder="Nombre completo del Arquitecto"
+            value={nombreInvitacion}
+            onChange={e => setNombreInvitacion(e.target.value)}
+            style={{ ...styles.inputFieldBold, marginBottom: '10px' }}
+          />
+          <input
+            placeholder="Email del Arquitecto"
+            type="email"
+            value={emailInvitacion}
+            onChange={e => setEmailInvitacion(e.target.value)}
+            style={{ ...styles.inputFieldBold, marginBottom: '20px' }}
+          />
+          {mensaje && (
+            <div style={{ padding: '12px', backgroundColor: mensaje.startsWith('✅') ? '#E8F5E9' : '#FFEBEE', borderRadius: '6px', marginBottom: '15px', fontSize: '13px', color: mensaje.startsWith('✅') ? '#2E7D32' : THEME.primary }}>
+              {mensaje}
+            </div>
+          )}
+          <button
+            onClick={handleInvitar}
+            disabled={enviando}
+            style={{ ...styles.btnPrimary, opacity: enviando ? 0.7 : 1 }}
+          >
+            {enviando ? 'Agregando...' : 'AGREGAR AL ESTUDIO'}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 // --- ESTILOS ---
 const styles: { [key: string]: React.CSSProperties } = {
-  header: { position: 'sticky', top: 0, zIndex: 100, backgroundColor: '#FFFFFF', borderBottom: '2px solid #1D1D1F', padding: '0 20px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+  header: { position: 'sticky', top: 0, zIndex: 100, backgroundColor: '#F5F5F7', borderBottom: '2px solid #1D1D1F', padding: '0 20px', height: '65px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
   logo: { display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' },
   isotipo: { width: '28px', height: '28px', backgroundColor: '#B21F24', clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)' },
   logoText: { fontSize: '14px', fontWeight: 900, letterSpacing: '0.05em', color: '#1D1D1F' },
-  btnMenu: { background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#1D1D1F' },
+  btnMenu: { background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#1D1D1F' },
   navMenu: { position: 'absolute', top: '60px', right: 0, backgroundColor: '#FFFFFF', border: '2px solid #1D1D1F', width: '260px', zIndex: 200, padding: '10px 0' },
   navItem: { padding: '14px 20px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 },
   container: { maxWidth: '680px', margin: '0 auto', padding: '40px 20px' },
@@ -1242,7 +1087,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   uploadContainer: { display: 'flex', gap: '10px', flexWrap: 'wrap' },
   fileUploadBold: { padding: '15px 20px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 700 },
   btnPrimary: { backgroundColor: '#B21F24', color: '#FFFFFF', border: 'none', padding: '16px 32px', fontSize: '13px', fontWeight: 900, letterSpacing: '0.08em', cursor: 'pointer', borderRadius: '6px', width: '100%' },
-  btnSecondaryOutline: { backgroundColor: 'transparent', color: '#1D1D1F', border: '2px solid #1D1D1F', padding: '14px 28px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', borderRadius: '6px', width: '100%' },
+  btnSecondaryOutline: { backgroundColor: 'transparent', color: '#1D1D1F', border: '2px solid #1D1D1F', padding: '14px 28px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', borderRadius: '6px' },
   btnBack: { background: 'none', border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer', color: '#6E6E73' },
   btnLuxuryBack: { backgroundColor: 'transparent', color: '#1D1D1F', border: '2px solid #1D1D1F', padding: '14px 28px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', borderRadius: '6px', width: '100%' },
   gridSteps: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px' },
