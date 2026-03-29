@@ -393,7 +393,17 @@ function ScreenCarga({ onNext, currentUser, userProfile, onLoginRequired }: any)
         fecha_creacion: serverTimestamp(),
         arquitecto_asignado: null,
       });
-      
+      try {
+        const emailjs = await import('@emailjs/browser');
+        await emailjs.send('delamatriz', 'template_no31o7y', {
+          usuario_nombre: userProfile?.nombre || '',
+          usuario_email: currentUser.email,
+          direccion_inmueble: direccionInmueble,
+          descripcion
+        }, 'd1aTzq_ytY2X8Mrdn');
+      } catch(emailErr) {
+        console.error('Email error:', emailErr);
+      }
       onNext();
     } catch (e) {
       console.error(e);
