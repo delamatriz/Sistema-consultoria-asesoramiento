@@ -419,6 +419,7 @@ function ScreenCarga({ onNext, currentUser, userProfile, onLoginRequired }: any)
             <input type="file" ref={photoRef} style={{ display: 'none' }} multiple accept="image/*,video/*" onChange={e => setArchivos(Array.from(e.target.files || []))} />
           </div>
         </div>
+        <p style={{ fontSize: '12px', color: '#6E6E73', marginTop: '8px' }}>Podes seleccionar varias fotos a la vez manteniendo Ctrl apretado</p>
         {archivos.length > 0 && (
           <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {archivos.map((f, i) => (
@@ -1309,4 +1310,5 @@ const styles: { [key: string]: React.CSSProperties } = {
   engineeringHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '15px', borderBottom: '2px solid #1D1D1F' },
   footer: { textAlign: 'center', padding: '30px 20px', fontSize: '12px', color: '#6E6E73', borderTop: '1px solid #E5E5E7', marginTop: '60px' },
 };
+
 
