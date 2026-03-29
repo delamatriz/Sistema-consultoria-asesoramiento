@@ -366,17 +366,17 @@ function ScreenCarga({ onNext, currentUser, userProfile, onLoginRequired }: any)
     setLoading(true);
     setProgreso('Guardando consulta...');
     try {
-      const fotosUrls: string[] = [];console.log('Archivos a subir:', archivos.length, archivos);
+      const fotosUrls: string[] = [];
       if (archivos.length > 0) {
         const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
         for (let i = 0; i < archivos.length; i++) {
           setProgreso('Subiendo foto ' + (i + 1) + ' de ' + archivos.length + '...');
           const archivo = archivos[i];
-          console.log('Iniciando subida a Storage...');
+          
           const storageRef = ref(storage, 'casos/' + currentUser.uid + '/' + Date.now() + '_' + archivo.name);
           await uploadBytes(storageRef, archivo);
           const url = await getDownloadURL(storageRef);
-          fotosUrls.push(url);console.log('URL de foto:', url);
+          fotosUrls.push(url);
         }
       }
       setProgreso('Registrando caso...');
@@ -393,7 +393,7 @@ function ScreenCarga({ onNext, currentUser, userProfile, onLoginRequired }: any)
         fecha_creacion: serverTimestamp(),
         arquitecto_asignado: null,
       });
-      console.log('Caso guardado con fotos:', fotosUrls);
+      
       onNext();
     } catch (e) {
       console.error(e);
