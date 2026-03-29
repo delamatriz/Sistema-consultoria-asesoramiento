@@ -1,5 +1,5 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
-import { auth, db } from './firebase/config';
+import { auth, db, storage } from './firebase/config';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -366,17 +366,17 @@ function ScreenCarga({ onNext, currentUser, userProfile, onLoginRequired }: any)
     setLoading(true);
     setProgreso('Guardando consulta...');
     try {
-      const fotosUrls: string[] = [];
+      const fotosUrls: string[] = [];console.log('Archivos a subir:', archivos.length, archivos);
       if (archivos.length > 0) {
         const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
-        const { storage } = await import('./firebase/config');
         for (let i = 0; i < archivos.length; i++) {
           setProgreso('Subiendo foto ' + (i + 1) + ' de ' + archivos.length + '...');
           const archivo = archivos[i];
+          console.log('Iniciando subida a Storage...');
           const storageRef = ref(storage, 'casos/' + currentUser.uid + '/' + Date.now() + '_' + archivo.name);
           await uploadBytes(storageRef, archivo);
           const url = await getDownloadURL(storageRef);
-          fotosUrls.push(url);
+          fotosUrls.push(url);console.log('URL de foto:', url);
         }
       }
       setProgreso('Registrando caso...');
@@ -393,6 +393,7 @@ function ScreenCarga({ onNext, currentUser, userProfile, onLoginRequired }: any)
         fecha_creacion: serverTimestamp(),
         arquitecto_asignado: null,
       });
+      console.log('Caso guardado con fotos:', fotosUrls);
       onNext();
     } catch (e) {
       console.error(e);
@@ -864,21 +865,41 @@ function ScreenSeguimiento({ caseId, onBack, onActuaciones }: any) {
       if (d.exists()) setCaso({ id: d.id, ...d.data() });
     });
   }, [caseId]);
+
   return (
     <div style={styles.container}>
-      <button onClick={onBack} style={styles.btnBack}>← Volver</button>
+      <button onClick={onBack} style={styles.btnBack}>Volver</button>
       <h2 style={styles.h2}>SEGUIMIENTO DE CONSULTA</h2>
-      <div style={{ ...styles.cardInfo, border: THEME.border }}>
-        <label style={styles.label}>ESTADO ACTUAL</label>
-        <p><strong>{caso?.estado || 'EN CURSO'}</strong></p>
-        <label style={{ ...styles.label, marginTop: '15px' }}>DESCRIPCIÓN</label>
-        <p>{caso?.descripcion || '-'}</p>
+      <div style={{ ...styles.cardInfo, border: '2px solid #1D1D1F', marginBottom: '15px' }}>
+        <label style={styles.label}>TU CONSULTA</label>
+        <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 4px 0' }}>INMUEBLE</p>
+        <p style={{ fontSize: '14px', margin: '0 0 15px 0' }}>{caso?.direccion_inmueble || '-'}</p>
+        <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 4px 0' }}>DESCRIPCION</p>
+        <p style={{ fontSize: '14px', lineHeight: '1.6', fontStyle: 'italic', margin: '0 0 15px 0' }}>"{caso?.descripcion}"</p>
+        {caso?.fotos_urls && caso.fotos_urls.length > 0 && (
+          <div>
+            <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 8px 0' }}>EVIDENCIA FOTOGRAFICA</p>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {caso.fotos_urls.map((url, i) => (
+                <img key={i} src={url} alt={'Foto ' + (i+1)} style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #E5E5E7', cursor: 'pointer' }} onClick={() => window.open(url, '_blank')} />
+              ))}
+            </div>
+          </div>
+        )}
+        <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '15px' }}>
+          <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 6px 0' }}>ESTADO</p>
+          <span style={{ fontSize: '11px', fontWeight: 900, padding: '4px 10px', borderRadius: '4px', backgroundColor: '#FFFDE7', color: '#F57F17' }}>
+            {caso?.estado || 'EN ANALISIS'}
+          </span>
+        </div>
       </div>
-      <button onClick={onActuaciones} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Ver actuaciones técnicas</button>
+      <div style={{ ...styles.cardInfo, border: '1px solid #E5E5E7', backgroundColor: '#F0F4FF' }}>
+        <p style={{ fontSize: '14px', color: '#1565C0', fontWeight: 600, margin: 0 }}>Un arquitecto especialista esta analizando tu caso. Te avisaremos cuando el diagnostico este listo.</p>
+      </div>
+      <button onClick={onActuaciones} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Ver actuaciones tecnicas</button>
     </div>
   );
 }
-
 function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
   const [caso, setCaso] = useState<any>(null);
   const [notaInterna, setNotaInterna] = useState('');
@@ -1288,3 +1309,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   engineeringHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '15px', borderBottom: '2px solid #1D1D1F' },
   footer: { textAlign: 'center', padding: '30px 20px', fontSize: '12px', color: '#6E6E73', borderTop: '1px solid #E5E5E7', marginTop: '60px' },
 };
+
