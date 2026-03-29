@@ -909,6 +909,16 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
             <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px' }}>
               <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>DESCRIPCION</p>
               <p style={{ fontSize: '14px', lineHeight: '1.6', fontStyle: 'italic', margin: 0 }}>"{caso.descripcion}"</p>
+              {caso.fotos_urls && caso.fotos_urls.length > 0 && (
+              <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 8px 0' }}>EVIDENCIA FOTOGRAFICA</p>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  {caso.fotos_urls.map((url, i) => (
+                    <img key={i} src={url} alt={'Foto ' + (i+1)} style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #E5E5E7', cursor: 'pointer' }} onClick={() => window.open(url, '_blank')} />
+                  ))}
+                </div>
+              </div>
+            )}
             </div>
             <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
               <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 6px 0' }}>ESTADO</p>
