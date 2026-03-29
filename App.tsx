@@ -352,18 +352,34 @@ function ScreenQuienesSomos({ onBack }: any) {
 // --- PANTALLA CARGA ---
 function ScreenCarga({ onNext, currentUser, userProfile, onLoginRequired }: any) {
   const photoRef = useRef<HTMLInputElement>(null);
-  const [attached, setAttached] = useState({ photos: false });
+  const [archivos, setArchivos] = useState<File[]>([]);
   const [descripcion, setDescripcion] = useState('');
   const [direccionInmueble, setDireccionInmueble] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [progreso, setProgreso] = useState('');
 
   const handleSubmit = async () => {
     if (!currentUser) { onLoginRequired(); return; }
-    if (!descripcion.trim()) { setError('Por favor describí el problema.'); return; }
-    if (!direccionInmueble.trim()) { setError('Por favor ingresá la dirección del inmueble.'); return; }
+    if (!descripcion.trim()) { setError('Por favor describe el problema.'); return; }
+    if (!direccionInmueble.trim()) { setError('Por favor ingresa la direccion del inmueble.'); return; }
     setLoading(true);
+    setProgreso('Guardando consulta...');
     try {
+      const fotosUrls: string[] = [];
+      if (archivos.length > 0) {
+        const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+        const { storage } = await import('./firebase/config');
+        for (let i = 0; i < archivos.length; i++) {
+          setProgreso('Subiendo foto ' + (i + 1) + ' de ' + archivos.length + '...');
+          const archivo = archivos[i];
+          const storageRef = ref(storage, 'casos/' + currentUser.uid + '/' + Date.now() + '_' + archivo.name);
+          await uploadBytes(storageRef, archivo);
+          const url = await getDownloadURL(storageRef);
+          fotosUrls.push(url);
+        }
+      }
+      setProgreso('Registrando caso...');
       const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
       await addDoc(casosRef, {
         usuario_id: currentUser.uid,
@@ -372,42 +388,52 @@ function ScreenCarga({ onNext, currentUser, userProfile, onLoginRequired }: any)
         usuario_telefono: userProfile?.telefono || '',
         direccion_inmueble: direccionInmueble,
         descripcion,
+        fotos_urls: fotosUrls,
         estado: 'NUEVO',
         fecha_creacion: serverTimestamp(),
         arquitecto_asignado: null,
       });
       onNext();
     } catch (e) {
-      setError('Error al enviar la consulta. Intentá de nuevo.');
+      console.error(e);
+      setError('Error al enviar la consulta. Intenta de nuevo.');
     }
     setLoading(false);
+    setProgreso('');
   };
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.h2}>CONTANOS QUÉ LE PASA A TU VIVIENDA</h2>
+      <h2 style={styles.h2}>CONTANOS QUE LE PASA A TU VIVIENDA</h2>
       <p style={styles.subtitleBold}>Esta consulta inicial es sin costo y analizada por expertos.</p>
-      <div style={{ ...styles.cardInfo, border: THEME.border }}>
+      <div style={{ ...styles.cardInfo, border: '2px solid #1D1D1F' }}>
         <label style={styles.label}>DATOS DEL INMUEBLE</label>
-        <input placeholder="Dirección del inmueble afectado *" value={direccionInmueble} onChange={e => setDireccionInmueble(e.target.value)} style={{ ...styles.inputFieldBold, marginBottom: '15px' }} />
-        <label style={styles.label}>DESCRIPCIÓN DEL PROBLEMA</label>
+        <input placeholder="Direccion del inmueble afectado *" value={direccionInmueble} onChange={e => setDireccionInmueble(e.target.value)} style={{ ...styles.inputFieldBold, marginBottom: '15px' }} />
+        <label style={styles.label}>DESCRIPCION DEL PROBLEMA</label>
         <textarea placeholder="Ej.: humedad en una pared del living, aparece en invierno..." value={descripcion} onChange={e => setDescripcion(e.target.value)} style={styles.textareaBold} />
-        <label style={styles.label}>EVIDENCIA FOTOGRÁFICA</label>
+        <label style={styles.label}>EVIDENCIA FOTOGRAFICA</label>
         <div style={styles.uploadContainer}>
-          <div onClick={() => photoRef.current?.click()} style={{ ...styles.fileUploadBold, border: THEME.border, backgroundColor: attached.photos ? '#F0FFF0' : 'transparent' }}>
-            {attached.photos ? '✅ Evidencia visual adjunta' : 'Adjuntar Fotos o Videos'}
-            <input type="file" ref={photoRef} style={{ display: 'none' }} multiple accept="image/*,video/*" onChange={() => setAttached({ ...attached, photos: true })} />
+          <div onClick={() => photoRef.current?.click()} style={{ ...styles.fileUploadBold, border: '2px solid #1D1D1F', backgroundColor: archivos.length > 0 ? '#F0FFF0' : 'transparent', cursor: 'pointer', padding: '15px 20px', borderRadius: '6px' }}>
+            {archivos.length > 0 ? archivos.length + ' archivo(s) adjunto(s)' : 'Adjuntar Fotos o Videos'}
+            <input type="file" ref={photoRef} style={{ display: 'none' }} multiple accept="image/*,video/*" onChange={e => setArchivos(Array.from(e.target.files || []))} />
           </div>
         </div>
+        {archivos.length > 0 && (
+          <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {archivos.map((f, i) => (
+              <span key={i} style={{ fontSize: '11px', padding: '4px 8px', backgroundColor: '#E8F5E9', borderRadius: '4px', color: '#2E7D32' }}>{f.name}</span>
+            ))}
+          </div>
+        )}
       </div>
-      {error && <p style={{ color: THEME.primary, marginTop: '10px', fontWeight: 700 }}>{error}</p>}
+      {error && <p style={{ color: '#B21F24', marginTop: '10px', fontWeight: 700 }}>{error}</p>}
+      {progreso && <p style={{ color: '#1565C0', marginTop: '10px', fontWeight: 600 }}>{progreso}</p>}
       <button onClick={handleSubmit} disabled={loading} style={{ ...styles.btnPrimary, marginTop: '30px', opacity: loading ? 0.7 : 1 }}>
-        {loading ? 'Enviando consulta...' : 'Enviar mi consulta profesional'}
+        {loading ? 'Enviando...' : 'Enviar mi consulta profesional'}
       </button>
     </div>
   );
 }
-
 // --- PANTALLA ANALIZANDO ---
 function ScreenAnalizando({ onExit }: any) {
   return (
@@ -485,27 +511,52 @@ function ScreenDetalle({ caseId, onBack, onEscalate }: any) {
 
   useEffect(() => {
     if (!caseId) { setLoading(false); return; }
-    const fetchCaso = async () => {
-      const caseDoc = await getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId));
-      if (caseDoc.exists()) setCaso({ id: caseDoc.id, ...caseDoc.data() });
+    getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId)).then(d => {
+      if (d.exists()) setCaso({ id: d.id, ...d.data() });
       setLoading(false);
-    };
-    fetchCaso();
+    });
   }, [caseId]);
 
-  if (loading) return <div style={styles.container}><p style={{ color: THEME.gray }}>Cargando...</p></div>;
+  if (loading) return <div style={styles.container}><p style={{ color: '#6E6E73' }}>Cargando...</p></div>;
 
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Expediente Técnico Profesional</span></div>
-      <h2 style={styles.h2}>RESPUESTA DE LA CONSULTA</h2>
-      <div style={{ ...styles.cardInfo, border: THEME.border }}>
-        <label style={styles.label}>DESCRIPCIÓN ORIGINAL</label>
-        <p>{caso?.descripcion}</p>
-        <label style={{ ...styles.label, marginTop: '20px' }}>DIAGNÓSTICO PRELIMINAR</label>
-        <p>{caso?.diagnostico || 'El diagnóstico está siendo preparado por el arquitecto asignado.'}</p>
+      <div style={styles.engineeringHeader}>
+        <button onClick={onBack} style={styles.btnBack}>Volver</button>
+        <span>Expediente Tecnico Profesional</span>
       </div>
-      <button onClick={onEscalate} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Ver opciones de asesoramiento</button>
+      <h2 style={styles.h2}>RESPUESTA DE LA CONSULTA</h2>
+      <div style={{ ...styles.cardInfo, border: '2px solid #1D1D1F', marginBottom: '15px' }}>
+        <label style={styles.label}>TU CONSULTA</label>
+        <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 4px 0' }}>INMUEBLE</p>
+        <p style={{ fontSize: '14px', margin: '0 0 15px 0' }}>{caso?.direccion_inmueble || '-'}</p>
+        <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 4px 0' }}>DESCRIPCION DEL PROBLEMA</p>
+        <p style={{ fontSize: '14px', lineHeight: '1.6', fontStyle: 'italic', margin: '0 0 15px 0' }}>"{caso?.descripcion}"</p>
+        {caso?.fotos_urls && caso.fotos_urls.length > 0 && (
+          <div>
+            <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 8px 0' }}>EVIDENCIA FOTOGRAFICA</p>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {caso.fotos_urls.map((url, i) => (
+                <img key={i} src={url} alt={'Foto ' + (i+1)} style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #E5E5E7', cursor: 'pointer' }} onClick={() => window.open(url, '_blank')} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+      <div style={{ ...styles.cardInfo, border: '2px solid #B21F24', marginBottom: '20px' }}>
+        <label style={{ ...styles.label, color: '#B21F24' }}>DIAGNOSTICO PROFESIONAL</label>
+        {caso?.diagnostico ? (
+          <>
+            <p style={{ fontSize: '15px', lineHeight: '1.7', margin: '0 0 15px 0' }}>{caso.diagnostico}</p>
+            <div style={{ padding: '12px', backgroundColor: '#E8F5E9', borderRadius: '6px' }}>
+              <p style={{ color: '#2E7D32', fontWeight: 700, fontSize: '13px', margin: 0 }}>Diagnostico validado por arquitecto especialista</p>
+            </div>
+          </>
+        ) : (
+          <p style={{ color: '#6E6E73', fontStyle: 'italic', margin: 0 }}>El diagnostico esta siendo preparado por el arquitecto asignado.</p>
+        )}
+      </div>
+      <button onClick={onEscalate} style={{ ...styles.btnPrimary }}>Ver opciones de asesoramiento</button>
     </div>
   );
 }
