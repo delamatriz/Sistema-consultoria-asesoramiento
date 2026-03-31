@@ -640,6 +640,21 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
           : c
       ));
       setSeleccionado(null);
+      try {
+        const arqSnap = await getDoc(doc(db, 'Usuarios', arquitectoId));
+        if (arqSnap.exists()) {
+          const arqData = arqSnap.data();
+          const emailjs = await import('@emailjs/browser');
+          const casoActual = casos.find(c => c.id === seleccionado);
+          await emailjs.send('delamatriz', 'template_no31o7y', {
+            asunto: 'Nuevo caso asignado - De La Matriz',
+            mensaje: 'Hola ' + arquitectoNombre + ', se te asigno un nuevo caso.\n\nInmueble: ' + (casoActual?.direccion_inmueble || '') + '\nDescripcion: ' + (casoActual?.descripcion || ''),
+            destinatario: arqData.email
+          }, 'd1aTzq_ytY2X8Mrdn');
+        }
+      } catch(emailErr) {
+        console.error('Email arquitecto:', emailErr);
+      }
     } catch (e) {
       console.error('Error asignando:', e);
     }
