@@ -953,8 +953,18 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
         diagnostico, nota_interna: notaInterna,
         estado: 'RESPONDIDA', fecha_respuesta: serverTimestamp()
       });
-      setEnviado(true);
+   setEnviado(true);
       setCaso((prev: any) => ({ ...prev, estado: 'RESPONDIDA' }));
+      try {
+        const emailjs = await import('@emailjs/browser');
+        await emailjs.send('delamatriz', 'template_no31o7y', {
+          asunto: 'Tu diagnostico esta listo - De La Matriz',
+          mensaje: 'Hola ' + (caso?.usuario_nombre || '') + ', tu consulta fue analizada.\n\nInmueble: ' + (caso?.direccion_inmueble || '') + '\n\nDiagnostico: ' + diagnostico + '\n\nIngresa al sistema para ver tu respuesta completa.',
+          destinatario: caso?.usuario_email || ''
+        }, 'd1aTzq_ytY2X8Mrdn');
+      } catch(emailErr) {
+        console.error('Email usuario:', emailErr);
+      }
     } catch (e) { console.error('Error:', e); }
     setGuardando(false);
   };
