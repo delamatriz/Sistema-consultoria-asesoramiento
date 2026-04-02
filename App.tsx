@@ -1149,14 +1149,147 @@ function PanelGConsultas({ onCase, onBack }: any) {
 }
 
 function PanelEConfiguracion({ onBack, onTeam }: any) {
+  const SERVICIOS_DEFAULT = [
+    { id: 'n0', nivel: 'Nivel 0', nombre: 'Consulta Inicial', descripcion: 'Diagnostico preliminar orientativo', precio_uyu: 0, precio_usd: 0, gratuito: true, activo: true },
+    { id: 'n1', nivel: 'Nivel 1', nombre: 'Informe Tecnico', descripcion: 'Documento tecnico con causas y recomendaciones', precio_uyu: 3800, precio_usd: 0, gratuito: false, activo: true },
+    { id: 'n1p', nivel: 'Nivel 1+', nombre: 'Informe Ampliado', descripcion: 'Informe tecnico detallado con analisis profundo', precio_uyu: 5600, precio_usd: 0, gratuito: false, activo: true },
+    { id: 'n2', nivel: 'Nivel 2', nombre: 'Videollamada Tecnica', descripcion: 'Visita teledirigida en tiempo real', precio_uyu: 3500, precio_usd: 0, gratuito: false, activo: true },
+    { id: 'n3', nivel: 'Nivel 3', nombre: 'Visita Presencial con Informe', descripcion: 'Relevamiento in situ y diagnostico confirmado', precio_uyu: 6800, precio_usd: 0, gratuito: false, activo: true },
+    { id: 'n4a', nivel: 'Nivel 4a', nombre: 'Pautas Terapeuticas', descripcion: 'Guia tecnica para reparaciones', precio_uyu: 4500, precio_usd: 0, gratuito: false, activo: true },
+    { id: 'n4b', nivel: 'Nivel 4b', nombre: 'Memoria Descriptiva', descripcion: 'Documentacion tecnica para obras de mayor entidad', precio_uyu: 12600, precio_usd: 0, gratuito: false, activo: true },
+    { id: 'n5', nivel: 'Nivel 5', nombre: 'Costos de Obra', descripcion: 'Solicitud y gestion de presupuestos', precio_uyu: 15000, precio_usd: 0, gratuito: false, activo: true },
+    { id: 'n6', nivel: 'Nivel 6', nombre: 'Supervision de Obra', descripcion: 'Acompanamiento profesional durante la ejecucion', precio_uyu: 0, precio_usd: 0, porcentaje: 10, gratuito: false, activo: true },
+    { id: 'n7', nivel: 'Nivel 7', nombre: 'Otras Actuaciones', descripcion: 'Gestion tecnica personalizada segun el caso', precio_uyu: 0, precio_usd: 0, a_determinar: true, gratuito: false, activo: true },
+  ];
+
+  const [servicios, setServicios] = useState(SERVICIOS_DEFAULT);
+  const [tipoCambio, setTipoCambio] = useState(42);
+  const [guardando, setGuardando] = useState(false);
+  const [guardado, setGuardado] = useState(false);
+  const [editando, setEditando] = useState<string | null>(null);
+
+  useEffect(() => {
+    const cargarPrecios = async () => {
+      const configDoc = await getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Configuracion', 'precios'));
+      if (configDoc.exists()) {
+        const data = configDoc.data();
+        if (data.servicios) setServicios(data.servicios);
+        if (data.tipo_cambio) setTipoCambio(data.tipo_cambio);
+      }
+    };
+    cargarPrecios();
+  }, []);
+
+  const handleGuardar = async () => {
+    setGuardando(true);
+    try {
+      await setDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Configuracion', 'precios'), {
+        servicios,
+        tipo_cambio: tipoCambio,
+        fecha_actualizacion: serverTimestamp()
+      });
+      setGuardado(true);
+      setTimeout(() => setGuardado(false), 3000);
+    } catch (e) {
+      console.error('Error guardando precios:', e);
+    }
+    setGuardando(false);
+  };
+
+  const updatePrecio = (id: string, campo: string, valor: any) => {
+    setServicios(prev => prev.map(s => s.id === id ? { ...s, [campo]: valor } : s));
+  };
+
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Configuración</span></div>
-      <h2 style={styles.h2}>CONFIGURACIÓN DEL ESTUDIO</h2>
-      <div style={{ ...styles.cardInfo, border: THEME.border }}>
-        <p style={{ color: THEME.gray }}>Configuración de precios y parámetros del estudio — próximamente.</p>
+      <div style={styles.engineeringHeader}>
+        <button onClick={onBack} style={styles.btnBack}>Volver</button>
+        <span>Configuracion del Estudio</span>
+        <button onClick={onTeam} style={{ ...styles.btnPrimary, width: 'auto', padding: '8px 16px', fontSize: '11px' }}>Gestion de Equipo</button>
       </div>
-      <button onClick={onTeam} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Gestión de Equipo</button>
+      <h2 style={styles.h2}>CONFIGURACION DE PRECIOS Y SERVICIOS</h2>
+      <p style={styles.subtitleBold}>Tabla de aranceles profesionales. Los precios en USD se calculan automaticamente segun el tipo de cambio.</p>
+
+      <div style={{ ...styles.cardInfo, border: '2px solid #1D1D1F', marginBottom: '20px' }}>
+        <label style={styles.label}>TIPO DE CAMBIO USD / UYU</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <span style={{ fontSize: '14px', color: '#6E6E73' }}>1 USD =</span>
+          <input
+            type="number"
+            value={tipoCambio}
+            onChange={e => setTipoCambio(Number(e.target.value))}
+            style={{ ...styles.inputFieldBold, width: '100px' }}
+          />
+          <span style={{ fontSize: '14px', color: '#6E6E73' }}>UYU</span>
+        </div>
+      </div>
+
+      <div style={{ ...styles.cardInfo, border: '2px solid #1D1D1F' }}>
+        <label style={styles.label}>TABLA DE ARANCELES PROFESIONALES</label>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
+          <thead>
+            <tr style={{ borderBottom: '2px solid #E5E5E7' }}>
+              {['Nivel', 'Servicio', 'Descripcion', 'Precio UYU', 'Precio USD', 'Estado'].map(h => (
+                <th key={h} style={{ padding: '10px 12px', textAlign: 'left', fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', textTransform: 'uppercase' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {servicios.map(s => (
+              <tr key={s.id} style={{ borderBottom: '1px solid #E5E5E7' }}>
+                <td style={{ padding: '12px', fontSize: '11px', fontWeight: 900, color: '#B21F24' }}>{s.nivel}</td>
+                <td style={{ padding: '12px', fontSize: '13px', fontWeight: 700 }}>{s.nombre}</td>
+                <td style={{ padding: '12px', fontSize: '12px', color: '#6E6E73', maxWidth: '200px' }}>{s.descripcion}</td>
+                <td style={{ padding: '12px' }}>
+                  {s.gratuito ? (
+                    <span style={{ fontSize: '12px', fontWeight: 900, color: '#2E7D32' }}>GRATIS</span>
+                  ) : s.a_determinar ? (
+                    <span style={{ fontSize: '12px', color: '#6E6E73' }}>A determinar</span>
+                  ) : s.porcentaje ? (
+                    <span style={{ fontSize: '12px', fontWeight: 700 }}>{s.porcentaje}% obra</span>
+                  ) : editando === s.id ? (
+                    <input
+                      type="number"
+                      value={s.precio_uyu}
+                      onChange={e => updatePrecio(s.id, 'precio_uyu', Number(e.target.value))}
+                      onBlur={() => setEditando(null)}
+                      autoFocus
+                      style={{ width: '90px', padding: '6px', border: '2px solid #B21F24', borderRadius: '4px', fontSize: '13px', fontWeight: 700 }}
+                    />
+                  ) : (
+                    <span
+                      onClick={() => setEditando(s.id)}
+                      style={{ fontSize: '13px', fontWeight: 900, color: '#1D1D1F', cursor: 'pointer', borderBottom: '1px dashed #6E6E73' }}
+                    >
+                      $ {s.precio_uyu.toLocaleString()}
+                    </span>
+                  )}
+                </td>
+                <td style={{ padding: '12px', fontSize: '13px', fontWeight: 700, color: '#6E6E73' }}>
+                  {s.gratuito ? '-' : s.a_determinar ? '-' : s.porcentaje ? '-' : 'U$S ' + (s.precio_uyu / tipoCambio).toFixed(0)}
+                </td>
+                <td style={{ padding: '12px' }}>
+                  <span style={{ fontSize: '10px', fontWeight: 900, padding: '4px 8px', borderRadius: '4px', backgroundColor: s.activo ? '#E8F5E9' : '#FFEBEE', color: s.activo ? '#2E7D32' : '#B21F24', cursor: 'pointer' }}
+                    onClick={() => updatePrecio(s.id, 'activo', !s.activo)}>
+                    {s.activo ? 'ACTIVO' : 'INACTIVO'}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
+        {guardado && (
+          <div style={{ padding: '15px 20px', backgroundColor: '#E8F5E9', border: '2px solid #2E7D32', borderRadius: '8px', flex: 1 }}>
+            <p style={{ color: '#2E7D32', fontWeight: 900, margin: 0 }}>Precios guardados correctamente</p>
+          </div>
+        )}
+        <button onClick={handleGuardar} disabled={guardando} style={{ ...styles.btnPrimary, opacity: guardando ? 0.7 : 1 }}>
+          {guardando ? 'Guardando...' : 'GUARDAR CONFIGURACION'}
+        </button>
+      </div>
     </div>
   );
 }
