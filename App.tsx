@@ -1159,7 +1159,7 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
     { id: 'n4b', nivel: 'Nivel 4b', nombre: 'Memoria Descriptiva', descripcion: 'Documentacion tecnica para obras de mayor entidad', precio_uyu: 12600, precio_usd: 0, gratuito: false, activo: true },
     { id: 'n5', nivel: 'Nivel 5', nombre: 'Costos de Obra', descripcion: 'Solicitud y gestion de presupuestos', precio_uyu: 15000, precio_usd: 0, gratuito: false, activo: true },
     { id: 'n6', nivel: 'Nivel 6', nombre: 'Supervision de Obra', descripcion: 'Acompanamiento profesional durante la ejecucion', precio_uyu: 0, precio_usd: 0, porcentaje: 10, gratuito: false, activo: true },
-    { id: 'n7', nivel: 'Nivel 7', nombre: 'Otras Actuaciones', descripcion: 'Gestion tecnica personalizada segun el caso', precio_uyu: 0, precio_usd: 0, a_determinar: true, gratuito: false, activo: true },
+   { id: 'n7', nivel: 'Nivel 7', nombre: 'Otras Actuaciones', descripcion: 'Gestion tecnica personalizada segun el caso', precio_uyu: 3500, precio_usd: 0, gratuito: false, activo: true },
   ];
 
   const [servicios, setServicios] = useState(SERVICIOS_DEFAULT);
