@@ -1139,8 +1139,8 @@ function PanelB1Tablero({ caseId, onBack, onUserView }: any) {
 
 function PanelGConsultas({ onCase, onBack }: any) {
   const [casos, setCasos] = useState<any[]>([]);
+  const [filtro, setFiltro] = useState('TODOS');
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchCasos = async () => {
       const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
@@ -1151,16 +1151,23 @@ function PanelGConsultas({ onCase, onBack }: any) {
     };
     fetchCasos();
   }, []);
-
+  const casosFiltrados = filtro === 'TODOS' ? casos : casos.filter(c => c.estado === filtro);
   return (
+
+) : casos.map(c => (
     <div style={styles.container}>
       <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Historial Global</span></div>
-      <h2 style={styles.h2}>TODAS LAS CONSULTAS</h2>
+    <h2 style={styles.h2}>TODAS LAS CONSULTAS</h2>
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
+        {['TODOS', 'NUEVO', 'EN ANALISIS', 'RESPONDIDA'].map(f => (
+          <button key={f} onClick={() => setFiltro(f)} style={{ padding: '8px 16px', fontSize: '11px', fontWeight: 900, cursor: 'pointer', borderRadius: '4px', border: '2px solid #1D1D1F', backgroundColor: filtro === f ? '#1D1D1F' : 'transparent', color: filtro === f ? '#FFFFFF' : '#1D1D1F' }}>{f}</button>
+        ))}
+      </div>
       {loading ? <p style={{ color: THEME.gray }}>Cargando...</p> : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          {casos.length === 0 ? (
-            <p style={{ color: THEME.gray }}>No hay consultas registradas aún.</p>
-          ) : casos.map(c => (
+          {casosFiltrados.length === 0 ? (
+            <p style={{ color: THEME.gray }}>No hay consultas con ese estado.</p>
+          ) : casosFiltrados.map(c => (
             <div key={c.id} style={{ ...styles.itemCase, border: THEME.border }} onClick={() => onCase(c.id)}>
               <strong>{c.usuario_nombre || 'Usuario'}</strong>
               <p style={{ fontSize: '12px', color: THEME.gray }}>{c.descripcion?.substring(0, 60)}...</p>
