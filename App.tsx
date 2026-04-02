@@ -1154,13 +1154,12 @@ function PanelGConsultas({ onCase, onBack }: any) {
   const casosFiltrados = filtro === 'TODOS' ? casos : casos.filter(c => c.estado === filtro);
   return (
 
-) : casos.map(c => (
     <div style={styles.container}>
       <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Historial Global</span></div>
     <h2 style={styles.h2}>TODAS LAS CONSULTAS</h2>
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
         {['TODOS', 'NUEVO', 'EN ANALISIS', 'RESPONDIDA'].map(f => (
-          <button key={f} onClick={() => setFiltro(f)} style={{ padding: '8px 16px', fontSize: '11px', fontWeight: 900, cursor: 'pointer', borderRadius: '4px', border: '2px solid #1D1D1F', backgroundColor: filtro === f ? '#1D1D1F' : 'transparent', color: filtro === f ? '#FFFFFF' : '#1D1D1F' }}>{f}</button>
+          <button key={f} onClick={() => setFiltro(f)} style={{ padding: '8px 16px', fontSize: '11px', fontWeight: 900, cursor: 'pointer', borderRadius: '4px', border: '2px solid ' + (f === 'NUEVO' ? '#1565C0' : f === 'EN ANALISIS' ? '#F57F17' : f === 'RESPONDIDA' ? '#2E7D32' : '#1D1D1F'), backgroundColor: filtro === f ? (f === 'NUEVO' ? '#1565C0' : f === 'EN ANALISIS' ? '#F57F17' : f === 'RESPONDIDA' ? '#2E7D32' : '#1D1D1F') : 'transparent', color: filtro === f ? '#FFFFFF' : (f === 'NUEVO' ? '#1565C0' : f === 'EN ANALISIS' ? '#F57F17' : f === 'RESPONDIDA' ? '#2E7D32' : '#1D1D1F') }}>{f}</button>
         ))}
       </div>
       {loading ? <p style={{ color: THEME.gray }}>Cargando...</p> : (
@@ -1510,6 +1509,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   engineeringHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '15px', borderBottom: '2px solid #1D1D1F' },
   footer: { textAlign: 'center', padding: '30px 20px', fontSize: '12px', color: '#6E6E73', borderTop: '1px solid #E5E5E7', marginTop: '60px' },
 };
+
 
 
 
