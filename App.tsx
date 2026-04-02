@@ -675,8 +675,8 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
         <button onClick={onLogout} style={styles.btnBack}>Cerrar sesión</button>
       </div>
       <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Director'}</h2>
-      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '30px' }}>
-        <button onClick={onConsultas} style={styles.btnPrimary}>Ver todas las consultas</button>
+    <button onClick={onConsultas} style={{ ...styles.btnPrimary, marginBottom: '10px' }}>Ver todas las consultas</button>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '30px' }}>
         <button onClick={onTeam} style={{ ...styles.btnSecondaryOutline }}>Gestión de equipo</button>
         <button onClick={onConfig} style={{ ...styles.btnSecondaryOutline }}>Configuración</button>
       </div>
