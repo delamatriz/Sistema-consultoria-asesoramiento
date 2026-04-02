@@ -932,6 +932,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
   const [diagnostico, setDiagnostico] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [enviado, setEnviado] = useState(false);
+  const [precioPropuesto, setPrecioPropuesto] = useState('');
 
   useEffect(() => {
     if (!caseId) return;
@@ -940,6 +941,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
         const data = { id: d.id, ...d.data() } as any;
         setCaso(data);
         setNotaInterna(data.nota_interna || '');
+        setPrecioPropuesto(data.precio_propuesto || '');
         setDiagnostico(data.diagnostico || '');
       }
     });
@@ -973,7 +975,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
     setGuardando(true);
     try {
       await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), {
-        nota_interna: notaInterna, diagnostico
+        nota_interna: notaInterna, diagnostico, precio_propuesto: precioPropuesto
       });
     } catch (e) { console.error('Error:', e); }
     setGuardando(false);
@@ -1040,6 +1042,17 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 <p style={{ fontSize: '13px', margin: 0 }}>{tiempoTranscurrido()}</p>
               </div>
             )}
+            {isDirectorView && caso.precio_propuesto && (
+              <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#B21F24', margin: '0 0 6px 0' }}>PRECIO PROPUESTO POR ARQUITECTO</p>
+                <p style={{ fontSize: '18px', fontWeight: 900, color: '#B21F24', margin: '0 0 10px 0' }}>$ {Number(caso.precio_propuesto).toLocaleString()} UYU</p>
+                {caso.precio_validado ? (
+                  <span style={{ fontSize: '11px', fontWeight: 900, padding: '4px 10px', borderRadius: '4px', backgroundColor: '#E8F5E9', color: '#2E7D32' }}>PRECIO VALIDADO</span>
+                ) : (
+                  <button onClick={async () => { await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), { precio_validado: true }); setCaso((prev: any) => ({ ...prev, precio_validado: true })); }} style={{ backgroundColor: '#B21F24', color: '#FFFFFF', border: 'none', padding: '8px 16px', fontSize: '11px', fontWeight: 900, cursor: 'pointer', borderRadius: '4px' }}>VALIDAR PRECIO</button>
+                )}
+              </div>
+            )}
             {isDirectorView && caso.arquitecto_nombre && (
               <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
                 <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 4px 0' }}>ARQUITECTO ASIGNADO</p>
@@ -1085,6 +1098,15 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 </div>
               ) : (
                 <>
+                  <div style={{ padding: '15px', border: '2px solid #1D1D1F', borderRadius: '8px', marginBottom: '10px' }}>
+                    <p style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 8px 0' }}>PRECIO PROPUESTO PARA ESTE CASO (UYU)</p>
+                    <input type='number' placeholder='Monto en UYU' value={precioPropuesto} onChange={e => setPrecioPropuesto(e.target.value)} style={{ width: '100%', padding: '10px', border: '2px solid #1D1D1F', borderRadius: '6px', fontSize: '14px', fontWeight: 700, boxSizing: 'border-box' }} />
+                    {caso?.precio_validado ? (
+                      <p style={{ color: '#2E7D32', fontWeight: 700, fontSize: '13px', marginTop: '8px' }}>Precio validado por el Director</p>
+                    ) : (
+                      <p style={{ fontSize: '11px', color: '#6E6E73', margin: '8px 0 0 0' }}>El Director validara este precio antes de informarlo al usuario.</p>
+                    )}
+                  </div>
                   <button onClick={handleGuardarNota} disabled={guardando} style={{ backgroundColor: 'transparent', color: '#1D1D1F', border: '2px solid #1D1D1F', padding: '14px 28px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', borderRadius: '6px', opacity: guardando ? 0.7 : 1 }}>
                     {guardando ? 'Guardando...' : 'Guardar borrador'}
                   </button>
@@ -1478,5 +1500,14 @@ const styles: { [key: string]: React.CSSProperties } = {
   engineeringHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '15px', borderBottom: '2px solid #1D1D1F' },
   footer: { textAlign: 'center', padding: '30px 20px', fontSize: '12px', color: '#6E6E73', borderTop: '1px solid #E5E5E7', marginTop: '60px' },
 };
+
+
+
+
+
+
+
+
+
 
 
