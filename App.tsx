@@ -1377,9 +1377,13 @@ function PanelFGestionEquipo({ estudioId, onBack, onAssignAction }: any) {
       const { createUserWithEmailAndPassword } = await import('firebase/auth');
       const tempPassword = 'Temp' + Math.random().toString(36).slice(2, 8) + '!';
       const userCredential = await createUserWithEmailAndPassword(auth, emailInvitacion, tempPassword);
-      await setDoc(doc(db, 'Usuarios', userCredential.user.uid), {
+   await setDoc(doc(db, 'Usuarios', userCredential.user.uid), {
         nombre: nombreInvitacion,
         email: emailInvitacion,
+        telefono: telefono,
+        direccion: direccion,
+        pais: pais,
+        especialidad: especialidad,
         rol: 'arquitecto',
         estudio_id: estudioId,
         activo: true,
