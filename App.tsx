@@ -1455,7 +1455,8 @@ const handleEliminarArquitecto = async (uid: string) => {
                     style={{ ...styles.btnSecondaryOutline, width: '100px', padding: '8px 12px', fontSize: '11px', color: '#B21F24', borderColor: '#B21F24' }}
                   >
                     Eliminar
-                  </button>
+              </button>
+                  </div>
                 </div>
           ))}
         </div>
