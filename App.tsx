@@ -137,7 +137,8 @@ export default function App() {
       case 'login_tecnico': return <ScreenLogin onLogin={handleLogin} onRegister={() => navigate('user_registro')} onForgot={() => navigate('user_recuperar')} error={authError} esProfesional={true} />;
       case 'arquitecto_dashboard': return <PanelADashboard currentUser={currentUser} userProfile={userProfile} onCase={(id: string) => navigate('arquitecto_ficha', id)} onLogout={handleLogout} />;
       case 'arquitecto_ficha': return <PanelBFicha caseId={selectedCaseId} onBack={() => navigate('arquitecto_dashboard')} onAdvanced={() => navigate('arquitecto_tablero')} />;
-      case 'director_dashboard': return <PanelCDirector currentUser={currentUser} userProfile={userProfile} onCase={(id) => navigate('director_auditoria', id)} onConfig={() => navigate('director_config')} onTeam={() => navigate('director_team')} onLogout={handleLogout} onConsultas={() => navigate('director_consultas')} onAssign={() => navigate('director_team')} />;
+      case 'director_dashboard': return <PanelCDirector currentUser={currentUser} userProfile={userProfile} onCase={(id) => navigate('director_auditoria', id)} onConfig={() => navigate('director_config')} onTeam={() => navigate('director_team')} onLogout={handleLogout} onConsultas={() => navigate('director_consultas')} onAssign={() => navigate('director_team')} onBiblioteca={() => navigate('director_biblioteca')} />;
+      case 'director_biblioteca': return <PanelBiblioteca estudioId={ESTUDIO_ID} onBack={() => navigate('director_dashboard')} isDirector={true} />;
       case 'director_auditoria': return <PanelBFicha caseId={selectedCaseId} onBack={() => navigate('director_dashboard')} isDirectorView={true} />;
       case 'director_consultas': return <PanelGConsultas onCase={(id) => navigate('director_auditoria', id)} onBack={() => navigate('director_dashboard')} />;
       case 'arquitecto_tablero': return <PanelB1Tablero caseId={selectedCaseId} onBack={() => navigate('arquitecto_ficha')} onUserView={() => navigate('user_seguimiento')} />;
@@ -592,7 +593,7 @@ function ScreenPerfil({ userProfile, onBack, onLogout }: any) {
 }
 
 // --- PANEL DIRECTOR ---
-function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, onLogout, onConsultas, onAssign }: any) {
+function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, onLogout, onConsultas, onAssign, onBiblioteca }: any) {
   const [casos, setCasos] = useState<any[]>([]);
   const [arquitectos, setArquitectos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -678,7 +679,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
     <button onClick={onConsultas} style={{ ...styles.btnPrimary, marginBottom: '10px' }}>Ver todas las consultas</button>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '30px' }}>
         <button onClick={onTeam} style={{ ...styles.btnSecondaryOutline }}>Gestión de equipo</button>
-        <button onClick={onConfig} style={{ ...styles.btnSecondaryOutline }}>Configuración</button>
+        <button onClick={onConfig} style={{ ...styles.btnSecondaryOutline }}>Configuración</button>           <button onClick={onBiblioteca} style={{ ...styles.btnSecondaryOutline }}>Biblioteca</button>
       </div>
       <label style={styles.label}>CASOS RECIENTES</label>
       {loading ? <p style={{ color: THEME.gray }}>Cargando casos...</p> : (
@@ -1325,6 +1326,125 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
   );
 }
 
+// --- PANEL BIBLIOTECA ---
+function PanelBiblioteca({ estudioId, onBack, isDirector }: any) {
+  const [documentos, setDocumentos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [subiendo, setSubiendo] = useState(false);
+  const [mensaje, setMensaje] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { fetchDocumentos(); }, []);
+
+  const fetchDocumentos = async () => {
+    setLoading(true);
+    try {
+      const { getStorage, ref, listAll, getDownloadURL, getMetadata } = await import('firebase/storage');
+      const storage = getStorage();
+      const carpetaRef = ref(storage, `biblioteca/${estudioId}`);
+      const resultado = await listAll(carpetaRef);
+      const docs = await Promise.all(resultado.items.map(async (item) => {
+        const url = await getDownloadURL(item);
+        const meta = await getMetadata(item);
+        return { nombre: item.name, url, fecha: meta.timeCreated, size: meta.size };
+      }));
+      docs.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+      setDocumentos(docs);
+    } catch (e) {
+      console.error(e);
+    }
+    setLoading(false);
+  };
+
+  const handleSubir = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSubiendo(true);
+    setMensaje('');
+    try {
+      const { getStorage, ref, uploadBytes } = await import('firebase/storage');
+      const storage = getStorage();
+      const archivoRef = ref(storage, `biblioteca/${estudioId}/${file.name}`);
+      await uploadBytes(archivoRef, file);
+      setMensaje('✅ Documento subido correctamente.');
+      fetchDocumentos();
+    } catch (e) {
+      console.error(e);
+      setMensaje('❌ Error al subir el documento.');
+    }
+    setSubiendo(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleEliminar = async (nombre: string) => {
+    if (!confirm(`¿Eliminar "${nombre}"?`)) return;
+    try {
+      const { getStorage, ref, deleteObject } = await import('firebase/storage');
+      const storage = getStorage();
+      const archivoRef = ref(storage, `biblioteca/${estudioId}/${nombre}`);
+      await deleteObject(archivoRef);
+      setMensaje('✅ Documento eliminado.');
+      fetchDocumentos();
+    } catch (e) {
+      console.error(e);
+      setMensaje('❌ Error al eliminar.');
+    }
+  };
+
+  const formatSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  const formatFecha = (iso: string) => new Date(iso).toLocaleDateString('es-UY', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  return (
+    <div style={styles.container}>
+      <div style={styles.engineeringHeader}>
+        <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>BIBLIOTECA DE DOCUMENTOS</span>
+        <button onClick={onBack} style={styles.btnBack}>← Volver</button>
+      </div>
+      <h2 style={styles.h2}>Documentos del Estudio</h2>
+      <p style={{ fontSize: '13px', color: THEME.gray, marginBottom: '30px' }}>Modelos, plantillas y documentos institucionales disponibles para el equipo.</p>
+
+      {isDirector && (
+        <div style={{ ...styles.cardInfo, border: THEME.border, marginBottom: '30px' }}>
+          <label style={styles.label}>SUBIR DOCUMENTO</label>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.xls,.xlsx" onChange={handleSubir} style={{ display: 'none' }} />
+            <button onClick={() => fileInputRef.current?.click()} disabled={subiendo} style={{ ...styles.btnPrimary, width: 'auto', padding: '10px 24px' }}>
+              {subiendo ? 'Subiendo...' : '+ Subir documento'}
+            </button>
+            <span style={{ fontSize: '12px', color: THEME.gray }}>PDF, Word o Excel</span>
+          </div>
+          {mensaje && <p style={{ marginTop: '12px', fontSize: '13px', color: mensaje.startsWith('✅') ? '#2E7D32' : THEME.primary }}>{mensaje}</p>}
+        </div>
+      )}
+
+      <div style={{ ...styles.cardInfo, border: THEME.border }}>
+        <label style={styles.label}>DOCUMENTOS DISPONIBLES</label>
+        {loading ? <p style={{ color: THEME.gray, fontSize: '13px' }}>Cargando...</p> :
+          documentos.length === 0 ? <p style={{ color: THEME.gray, fontSize: '13px' }}>No hay documentos cargados aún.</p> :
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
+            {documentos.map((doc) => (
+              <div key={doc.nombre} style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '15px', border: `1px solid ${THEME.softGray}`, borderRadius: '8px' }}>
+                <div>
+                  <strong style={{ fontSize: '14px' }}>{doc.nombre}</strong>
+                  <p style={{ fontSize: '11px', color: THEME.gray, margin: '4px 0 0 0' }}>{formatFecha(doc.fecha)} · {formatSize(doc.size)}</p>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ ...styles.btnPrimary, width: '100px', padding: '8px 12px', fontSize: '11px', textDecoration: 'none', textAlign: 'center', display: 'inline-block' }}>Descargar</a>
+                  {isDirector && <button onClick={() => handleEliminar(doc.nombre)} style={{ ...styles.btnSecondaryOutline, width: '100px', padding: '8px 12px', fontSize: '11px', color: '#B21F24', borderColor: '#B21F24' }}>Eliminar</button>}
+                </div>
+              </div>
+            ))}
+          </div>
+        }
+      </div>
+    </div>
+  );
+}
 function PanelFGestionEquipo({ estudioId, onBack, onAssignAction }: any) {
   const [arquitectos, setArquitectos] = useState<any[]>([]);
   const [casos, setCasos] = useState<any[]>([]);
