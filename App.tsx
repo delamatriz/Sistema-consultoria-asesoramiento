@@ -1444,12 +1444,7 @@ const handleEliminarArquitecto = async (uid: string) => {
                     <p style={{ fontSize: '11px', color: THEME.gray, margin: '2px 0 0 0' }}>{arq.email}</p>
                   </div>
            
-                  <button
-                    onClick={onAssignAction}
-                    style={{ ...styles.btnPrimary, width: '140px', padding: '10px 16px', fontSize: '11px' }}
-                  >
-                    Asignar al caso
-                  </button>
+                                </button>
                   <button
                     onClick={() => handleEliminarArquitecto(arq.id)}
                     style={{ ...styles.btnSecondaryOutline, width: '140px', padding: '10px 16px', fontSize: '11px', color: '#B21F24', borderColor: '#B21F24' }}
