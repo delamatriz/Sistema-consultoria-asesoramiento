@@ -1435,14 +1435,15 @@ const handleEliminarArquitecto = async (uid: string) => {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
               {arquitectos.map(arq => (
-                <div key={arq.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', border: `1px solid ${THEME.softGray}`, borderRadius: '8px' }}>
+             <div key={arq.id} style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '15px', border: `1px solid ${THEME.softGray}`, borderRadius: '8px' }}>
                   <div>
                     <strong style={{ fontSize: '14px' }}>{arq.nombre}</strong>
                     <p style={{ fontSize: '12px', color: THEME.gray, margin: '3px 0 0 0' }}>
                       {getCasosCount(arq.id)} caso{getCasosCount(arq.id) !== 1 ? 's' : ''} activo{getCasosCount(arq.id) !== 1 ? 's' : ''}
                     </p>
                     <p style={{ fontSize: '11px', color: THEME.gray, margin: '2px 0 0 0' }}>{arq.email}</p>
-          </div>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
                   <button
                     onClick={onAssignAction}
                     style={{ ...styles.btnPrimary, width: '100px', padding: '8px 12px', fontSize: '11px' }}
