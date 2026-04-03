@@ -1448,13 +1448,18 @@ const handleEliminarArquitecto = async (uid: string) => {
                     style={{ ...styles.btnPrimary, width: 'auto', padding: '10px 16px', fontSize: '11px' }}
                   >
                     Asignar al caso
-        </button>
-              <button
-                onClick={() => handleEliminarArquitecto(arq.id)}
-                style={{ ...styles.btnSecondaryOutline, width: 'auto', padding: '10px 16px', fontSize: '11px', color: '#B21F24', borderColor: '#B21F24' }}
-              >
-                Eliminar
-              </button>
+    <button
+                    onClick={onAssignAction}
+                    style={{ ...styles.btnPrimary, width: '140px', padding: '10px 16px', fontSize: '11px' }}
+                  >
+                    Asignar al caso
+                  </button>
+                  <button
+                    onClick={() => handleEliminarArquitecto(arq.id)}
+                    style={{ ...styles.btnSecondaryOutline, width: '140px', padding: '10px 16px', fontSize: '11px', color: '#B21F24', borderColor: '#B21F24' }}
+                  >
+                    Eliminar
+                  </button>
             </div>
           ))}
         </div>
