@@ -1330,6 +1330,10 @@ function PanelFGestionEquipo({ estudioId, onBack, onAssignAction }: any) {
   const [casos, setCasos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [emailInvitacion, setEmailInvitacion] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [direccion, setDireccion] = useState('');
+  const [pais, setPais] = useState('Uruguay');
+  const [especialidad, setEspecialidad] = useState('');
   const [nombreInvitacion, setNombreInvitacion] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [mensaje, setMensaje] = useState('');
@@ -1454,6 +1458,36 @@ function PanelFGestionEquipo({ estudioId, onBack, onAssignAction }: any) {
             value={emailInvitacion}
             onChange={e => setEmailInvitacion(e.target.value)}
             style={{ ...styles.inputFieldBold, marginBottom: '20px' }}
+          />
+          <input
+            placeholder="Telefono o celular"
+            value={telefono}
+            onChange={e => setTelefono(e.target.value)}
+            style={{ ...styles.inputFieldBold, marginBottom: '10px' }}
+          />
+          <input
+            placeholder="Direccion"
+            value={direccion}
+            onChange={e => setDireccion(e.target.value)}
+            style={{ ...styles.inputFieldBold, marginBottom: '10px' }}
+          />
+          <select
+            value={pais}
+            onChange={e => setPais(e.target.value)}
+            style={{ ...styles.inputFieldBold, marginBottom: '10px' }}
+          >
+            <option value="Uruguay">Uruguay</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Brasil">Brasil</option>
+            <option value="Chile">Chile</option>
+            <option value="Paraguay">Paraguay</option>
+            <option value="Otro">Otro</option>
+          </select>
+          <input
+            placeholder="Especialidad (ej: Patologias edilicias)"
+            value={especialidad}
+            onChange={e => setEspecialidad(e.target.value)}
+            style={{ ...styles.inputFieldBold, marginBottom: '15px' }}
           />
           {mensaje && (
             <div style={{ padding: '12px', backgroundColor: mensaje.startsWith('✅') ? '#E8F5E9' : '#FFEBEE', borderRadius: '6px', marginBottom: '15px', fontSize: '13px', color: mensaje.startsWith('✅') ? '#2E7D32' : THEME.primary }}>
