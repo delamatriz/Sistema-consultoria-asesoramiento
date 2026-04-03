@@ -1366,7 +1366,18 @@ function PanelFGestionEquipo({ estudioId, onBack, onAssignAction }: any) {
   const getCasosCount = (arquitectoId: string) => {
     return casos.filter(c => c.arquitecto_asignado === arquitectoId && c.estado !== 'RESPONDIDA').length;
   };
-
+const handleEliminarArquitecto = async (uid: string) => {
+    if (!confirm('¿Seguro que querés eliminar este arquitecto del estudio?')) return;
+    try {
+      const { deleteDoc, doc: firestoreDoc } = await import('firebase/firestore');
+      await deleteDoc(firestoreDoc(db, 'Usuarios', uid));
+      setMensaje('✅ Arquitecto eliminado correctamente.');
+      fetchData();
+    } catch (e) {
+      console.error(e);
+      setMensaje('❌ Error al eliminar el arquitecto.');
+    }
+  };
   const handleInvitar = async () => {
     if (!emailInvitacion || !nombreInvitacion) {
       setMensaje('Por favor completá nombre y email.');
@@ -1437,10 +1448,16 @@ function PanelFGestionEquipo({ estudioId, onBack, onAssignAction }: any) {
                     style={{ ...styles.btnPrimary, width: 'auto', padding: '10px 16px', fontSize: '11px' }}
                   >
                     Asignar al caso
-                  </button>
-                </div>
-              ))}
+        </button>
+              <button
+                onClick={() => handleEliminarArquitecto(arq.id)}
+                style={{ ...styles.btnSecondaryOutline, width: 'auto', padding: '10px 16px', fontSize: '11px', color: '#B21F24', borderColor: '#B21F24' }}
+              >
+                Eliminar
+              </button>
             </div>
+          ))}
+        </div>
           )}
         </div>
 
