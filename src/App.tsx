@@ -1161,6 +1161,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 {caso.diagnostico || 'Pendiente de diagnostico del arquitecto.'}
               </p>
             ) : (
+              <>
               {caso.estado !== 'RESPONDIDA' && (
                 <button
                   onClick={async () => {
@@ -1217,7 +1218,8 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 onChange={e => setDiagnostico(e.target.value)}
                 style={{ ...styles.textareaBold, minHeight: '160px', borderColor: '#B21F24' }}
                 disabled={caso.estado === 'RESPONDIDA'}
-              />
+             />
+              </>
             )}
           </div>
           {!isDirectorView && (
