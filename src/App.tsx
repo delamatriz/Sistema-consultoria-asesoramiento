@@ -1096,6 +1096,60 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 <p style={{ fontSize: '13px', margin: 0 }}>{caso.arquitecto_nombre}</p>
               </div>
             )}
+            {isDirectorView && (
+              <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>NIVEL DE SERVICIO</p>
+                <select
+                  value={caso.nivel_servicio || ''}
+                  onChange={async e => {
+                    await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), { nivel_servicio: e.target.value });
+                    setCaso((prev: any) => ({ ...prev, nivel_servicio: e.target.value }));
+                  }}
+                  style={{ ...styles.inputFieldBold, marginBottom: '0' }}
+                >
+                  <option value="">Sin asignar</option>
+                  <option value="Nivel 1">Nivel 1 — Informe Técnico</option>
+                  <option value="Nivel 1+">Nivel 1+ — Informe Ampliado</option>
+                  <option value="Nivel 2">Nivel 2 — Videollamada Técnica</option>
+                  <option value="Nivel 3">Nivel 3 — Visita Presencial</option>
+                  <option value="Nivel 4a">Nivel 4a — Pautas Terapéuticas</option>
+                  <option value="Nivel 4b">Nivel 4b — Memoria Descriptiva</option>
+                  <option value="Nivel 5">Nivel 5 — Gestión de Costos</option>
+                  <option value="Nivel 6">Nivel 6 — Supervisión de Obra</option>
+                </select>
+              </div>
+            )}
+            {isDirectorView && (
+              <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>HONORARIO ARQUITECTO ($ UYU)</p>
+                <input
+                  type="number"
+                  placeholder="Ingresá el monto"
+                  value={caso.honorario_arquitecto || ''}
+                  onChange={async e => {
+                    const valor = Number(e.target.value);
+                    await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), { honorario_arquitecto: valor });
+                    setCaso((prev: any) => ({ ...prev, honorario_arquitecto: valor }));
+                  }}
+                  style={{ ...styles.inputFieldBold, marginBottom: '0' }}
+                />
+              </div>
+            )}
+            {isDirectorView && (
+              <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>ESTADO DE PAGO</p>
+                {caso.pago_estado === 'pagado' ? (
+                  <span style={{ fontSize: '11px', fontWeight: 900, padding: '4px 10px', borderRadius: '4px', backgroundColor: '#E8F5E9', color: '#2E7D32' }}>PAGADO</span>
+                ) : (
+                  <button onClick={async () => {
+                    await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), { pago_estado: 'pagado' });
+                    setCaso((prev: any) => ({ ...prev, pago_estado: 'pagado' }));
+                  }} style={{ backgroundColor: '#2E7D32', color: '#FFFFFF', border: 'none', padding: '8px 16px', fontSize: '11px', fontWeight: 900, cursor: 'pointer', borderRadius: '4px' }}>
+                    MARCAR COMO PAGADO
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
