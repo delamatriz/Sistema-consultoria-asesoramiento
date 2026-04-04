@@ -135,7 +135,9 @@ export default function App() {
       case 'user_actuaciones': return <ScreenOpcionesActuacion onSelect={(service) => { setSelectedService(service); navigate('user_pago'); }} onBack={() => navigate('user_seguimiento')} />;
       case 'user_perfil': return <ScreenPerfil userProfile={userProfile} onBack={() => navigate('user_home')} onLogout={handleLogout} />;
       case 'login_tecnico': return <ScreenLogin onLogin={handleLogin} onRegister={() => navigate('user_registro')} onForgot={() => navigate('user_recuperar')} error={authError} esProfesional={true} />;
-      case 'arquitecto_dashboard': return <PanelADashboard currentUser={currentUser} userProfile={userProfile} onCase={(id: string) => navigate('arquitecto_ficha', id)} onLogout={handleLogout} />;
+      case 'arquitecto_biblioteca': return <PanelBiblioteca estudioId={ESTUDIO_ID} onBack={() => navigate('arquitecto_dashboard')} isDirector={false} />;
+case 'arquitecto_dashboard': return <PanelADashboard ...
+      case 'arquitecto_dashboard': return <PanelADashboard currentUser={currentUser} userProfile={userProfile} onCase={(id: string) => navigate('arquitecto_ficha', id)} onLogout={handleLogout} onBiblioteca={() => navigate('arquitecto_biblioteca')} />;
       case 'arquitecto_ficha': return <PanelBFicha caseId={selectedCaseId} onBack={() => navigate('arquitecto_dashboard')} onAdvanced={() => navigate('arquitecto_tablero')} />;
       case 'director_dashboard': return <PanelCDirector currentUser={currentUser} userProfile={userProfile} onCase={(id) => navigate('director_auditoria', id)} onConfig={() => navigate('director_config')} onTeam={() => navigate('director_team')} onLogout={handleLogout} onConsultas={() => navigate('director_consultas')} onAssign={() => navigate('director_team')} onBiblioteca={() => navigate('director_biblioteca')} />;
       case 'director_biblioteca': return <PanelBiblioteca estudioId={ESTUDIO_ID} onBack={() => navigate('director_dashboard')} isDirector={true} />;
@@ -750,7 +752,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
 }
 
 // --- PANEL ARQUITECTO DASHBOARD ---
-function PanelADashboard({ currentUser, userProfile, onCase, onLogout }: any) {
+function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBiblioteca }: any) {
   const [casos, setCasos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -773,7 +775,8 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout }: any) {
         <span>PANEL ARQUITECTO</span>
         <button onClick={onLogout} style={styles.btnBack}>Cerrar sesión</button>
       </div>
-      <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Arquitecto'}</h2>
+     <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Arquitecto'}</h2>
+      <button onClick={onBiblioteca} style={{ ...styles.btnSecondaryOutline, marginBottom: '20px' }}>Biblioteca de documentos</button>
       <label style={styles.label}>CASOS ASIGNADOS</label>
       {loading ? <p style={{ color: THEME.gray }}>Cargando casos...</p> : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
