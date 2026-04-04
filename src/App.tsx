@@ -140,7 +140,7 @@ export default function App() {
       case 'arquitecto_micuenta': return <PanelAMiCuenta currentUser={currentUser} onBack={() => navigate('arquitecto_dashboard')} />;
       case 'arquitecto_miperfil': return <PanelAMiPerfil currentUser={currentUser} userProfile={userProfile} onBack={() => navigate('arquitecto_dashboard')} />;
       case 'arquitecto_dashboard': return <PanelADashboard currentUser={currentUser} userProfile={userProfile} onCase={(id: string) => navigate('arquitecto_ficha', id)} onLogout={handleLogout} onBiblioteca={() => navigate('arquitecto_biblioteca')} onMisCasos={() => navigate('arquitecto_miscasos')} onMiCuenta={() => navigate('arquitecto_micuenta')} onMiPerfil={() => navigate('arquitecto_miperfil')} />;
-      case 'arquitecto_ficha': return <PanelBFicha caseId={selectedCaseId} onBack={() => navigate('arquitecto_dashboard')} onAdvanced={() => navigate('arquitecto_tablero')} />;
+      case 'arquitecto_ficha': return <PanelBFicha caseId={selectedCaseId} onBack={() => navigate('arquitecto_dashboard')} />;
       case 'director_dashboard': return <PanelCDirector currentUser={currentUser} userProfile={userProfile} onCase={(id) => navigate('director_auditoria', id)} onConfig={() => navigate('director_config')} onTeam={() => navigate('director_team')} onLogout={handleLogout} onConsultas={() => navigate('director_consultas')} onAssign={() => navigate('director_team')} onBiblioteca={() => navigate('director_biblioteca')} />;
       case 'director_biblioteca': return <PanelBiblioteca estudioId={ESTUDIO_ID} onBack={() => navigate('director_dashboard')} isDirector={true} />;
       case 'director_auditoria': return <PanelBFicha caseId={selectedCaseId} onBack={() => navigate('director_dashboard')} isDirectorView={true} />;
@@ -1038,11 +1038,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
       <div style={styles.engineeringHeader}>
         <button onClick={onBack} style={styles.btnBack}>Volver</button>
         <span>{isDirectorView ? 'Vista Director' : 'Ficha Tecnica'}</span>
-        {!isDirectorView && onAdvanced && (
-          <button onClick={onAdvanced} style={{ ...styles.btnPrimary, width: 'auto', padding: '8px 16px', fontSize: '11px' }}>
-            Bitacora
-          </button>
-        )}
+        
       </div>
       <h2 style={styles.h2}>FICHA DE CONSULTA TECNICA</h2>
       <p style={styles.subtitleBold}>Analisis de evidencia tecnica y validacion del diagnostico.</p>
