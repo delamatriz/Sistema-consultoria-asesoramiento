@@ -784,7 +784,7 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
       <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Arquitecto'}</h2>
 
       {/* Tarjetas resumen */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '30px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
         <div style={{ ...styles.cardInfo, border: THEME.border }}>
           <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>CASOS ACTIVOS</p>
           <p style={{ fontSize: '28px', fontWeight: 900, color: THEME.primary }}>{loading ? '—' : casosActivos}</p>
