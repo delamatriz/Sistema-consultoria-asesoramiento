@@ -971,6 +971,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
   const [caso, setCaso] = useState<any>(null);
   const [notaInterna, setNotaInterna] = useState('');
   const [diagnostico, setDiagnostico] = useState('');
+  const [generandoIA, setGenerandoIA] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [precioPropuesto, setPrecioPropuesto] = useState('');
@@ -1160,8 +1161,33 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 {caso.diagnostico || 'Pendiente de diagnostico del arquitecto.'}
               </p>
             ) : (
+              {caso.estado !== 'RESPONDIDA' && (
+                <button
+                  onClick={async () => {
+                    setGenerandoIA(true);
+                    try {
+                      const prompt = `Sos un arquitecto con mas de 20 anos de experiencia, especializado en patologias edilicias, arquitectura, construccion y normativa edilicia. Tu expertise principal es el diagnostico y rehabilitacion de edificios de propiedad horizontal, con profundo conocimiento de la normativa vigente en Uruguay y la region.\n\nAnaliza el siguiente caso y genera un borrador de diagnostico tecnico profesional:\n\nDESCRIPCION DEL PROBLEMA: ${caso.descripcion}\nDIRECCION DEL INMUEBLE: ${caso.direccion_inmueble}\n\nSi el caso refiere a una patologia edilicia, el diagnostico debe:\n- Identificar la patologia mas probable con su denominacion tecnica\n- Explicar las causas tecnicas mas frecuentes asociadas\n- Evaluar el nivel de urgencia de intervencion\n- Redactarse de forma clara, precisa y profesional\n- Tener entre 150 y 250 palabras\n- Concluir con una recomendacion concreta de actuacion\n\nSi el caso refiere a otra consulta tecnica (normativa, proyecto, construccion, etc.), responde con criterio profesional basandote en tu experiencia, con la misma extension y cerrando siempre con una recomendacion de actuacion.\n\nImportante: este texto sera revisado, ajustado y validado por un arquitecto matriculado antes de ser enviado al cliente. No incluyas disclaimers, advertencias ni menciones a la IA en tu respuesta. Responde directamente con el diagnostico.`;
+                      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                      });
+                      const data = await res.json();
+                      const texto = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                      setDiagnostico(texto);
+                    } catch (e) {
+                      console.error('Error Gemini:', e);
+                    }
+                    setGenerandoIA(false);
+                  }}
+                  disabled={generandoIA}
+                  style={{ ...styles.btnSecondaryOutline, width: '100%', marginBottom: '10px', fontSize: '12px', padding: '10px' }}
+                >
+                  {generandoIA ? 'Generando borrador...' : 'Generar borrador con IA'}
+                </button>
+              )}
               <textarea
-                placeholder="Redacta el diagnostico tecnico profesional para el usuario..."
+                placeholder="Redacta tu respuesta tecnica profesional..."
                 value={diagnostico}
                 onChange={e => setDiagnostico(e.target.value)}
                 style={{ ...styles.textareaBold, minHeight: '160px', borderColor: '#B21F24' }}
