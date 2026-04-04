@@ -1427,6 +1427,7 @@ function PanelAMisCasos({ currentUser, onBack, onCase }: any) {
 function PanelAMiCuenta({ currentUser, onBack }: any) {
   const [casos, setCasos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filtroPago, setFiltroPago] = useState<'todos' | 'pendiente' | 'pagado'>('todos');
   useEffect(() => {
     if (!currentUser) return;
     const fetch = async () => {
@@ -1450,12 +1451,12 @@ function PanelAMiCuenta({ currentUser, onBack }: any) {
         <button onClick={onBack} style={styles.btnBack}>← Volver</button>
       </div>
       <h2 style={styles.h2}>Estado de Pagos</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '30px' }}>
-        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '30px' }}>
+        <div onClick={() => setFiltroPago('pendiente')} style={{ ...styles.cardInfo, border: filtroPago === 'pendiente' ? `2px solid ${THEME.primary}` : THEME.border, cursor: 'pointer' }}>
           <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>PENDIENTE DE COBRO</p>
           <p style={{ fontSize: '24px', fontWeight: 900, color: THEME.primary }}>${totalPendiente.toLocaleString('es-UY')}</p>
         </div>
-        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+        <div onClick={() => setFiltroPago('pagado')} style={{ ...styles.cardInfo, border: filtroPago === 'pagado' ? `2px solid #2E7D32` : THEME.border, cursor: 'pointer' }}>
           <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>TOTAL COBRADO</p>
           <p style={{ fontSize: '24px', fontWeight: 900, color: '#2E7D32' }}>${totalCobrado.toLocaleString('es-UY')}</p>
         </div>
@@ -1466,7 +1467,7 @@ function PanelAMiCuenta({ currentUser, onBack }: any) {
           <p style={{ color: THEME.gray, fontSize: '13px' }}>No hay casos asignados.</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
-            {casos.map(c => (
+            {casos.filter(c => filtroPago === 'todos' || c.pago_estado === filtroPago || (!c.pago_estado && filtroPago === 'pendiente')).map(c => (
               <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: `1px solid ${THEME.softGray}`, borderRadius: '8px' }}>
                 <div>
                   <strong style={{ fontSize: '13px' }}>{c.usuario_nombre || 'Usuario'}</strong>
@@ -1478,7 +1479,7 @@ function PanelAMiCuenta({ currentUser, onBack }: any) {
                     {c.honorario_arquitecto ? `$${c.honorario_arquitecto.toLocaleString('es-UY')}` : 'Sin asignar'}
                   </p>
                   <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', backgroundColor: c.pago_estado === 'pagado' ? '#E8F5E9' : '#FFF3E0', color: c.pago_estado === 'pagado' ? '#2E7D32' : '#E65100' }}>
-                    {c.pago_estado === 'pagado' ? 'PAGADO' : 'PENDIENTE'}
+                    {c.pago_estado === 'pagado' ? 'PAGADO' : 'PAGO PENDIENTE'}
                   </span>
                 </div>
               </div>
