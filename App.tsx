@@ -136,7 +136,10 @@ export default function App() {
       case 'user_perfil': return <ScreenPerfil userProfile={userProfile} onBack={() => navigate('user_home')} onLogout={handleLogout} />;
       case 'login_tecnico': return <ScreenLogin onLogin={handleLogin} onRegister={() => navigate('user_registro')} onForgot={() => navigate('user_recuperar')} error={authError} esProfesional={true} />;
       case 'arquitecto_biblioteca': return <PanelBiblioteca estudioId={ESTUDIO_ID} onBack={() => navigate('arquitecto_dashboard')} isDirector={false} />;
-      case 'arquitecto_dashboard': return <PanelADashboard currentUser={currentUser} userProfile={userProfile} onCase={(id: string) => navigate('arquitecto_ficha', id)} onLogout={handleLogout} onBiblioteca={() => navigate('arquitecto_biblioteca')} />;
+      case 'arquitecto_miscasos': return <PanelAMisCasos currentUser={currentUser} onBack={() => navigate('arquitecto_dashboard')} onCase={(id: string) => navigate('arquitecto_ficha', id)} />;
+      case 'arquitecto_micuenta': return <PanelAMiCuenta currentUser={currentUser} onBack={() => navigate('arquitecto_dashboard')} />;
+      case 'arquitecto_miperfil': return <PanelAMiPerfil currentUser={currentUser} userProfile={userProfile} onBack={() => navigate('arquitecto_dashboard')} />;
+      case 'arquitecto_dashboard': return <PanelADashboard currentUser={currentUser} userProfile={userProfile} onCase={(id: string) => navigate('arquitecto_ficha', id)} onLogout={handleLogout} onBiblioteca={() => navigate('arquitecto_biblioteca')} onMisCasos={() => navigate('arquitecto_miscasos')} onMiCuenta={() => navigate('arquitecto_micuenta')} onMiPerfil={() => navigate('arquitecto_miperfil')} />;
       case 'arquitecto_ficha': return <PanelBFicha caseId={selectedCaseId} onBack={() => navigate('arquitecto_dashboard')} onAdvanced={() => navigate('arquitecto_tablero')} />;
       case 'director_dashboard': return <PanelCDirector currentUser={currentUser} userProfile={userProfile} onCase={(id) => navigate('director_auditoria', id)} onConfig={() => navigate('director_config')} onTeam={() => navigate('director_team')} onLogout={handleLogout} onConsultas={() => navigate('director_consultas')} onAssign={() => navigate('director_team')} onBiblioteca={() => navigate('director_biblioteca')} />;
       case 'director_biblioteca': return <PanelBiblioteca estudioId={ESTUDIO_ID} onBack={() => navigate('director_dashboard')} isDirector={true} />;
@@ -751,10 +754,9 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
 }
 
 // --- PANEL ARQUITECTO DASHBOARD ---
-function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBiblioteca }: any) {
+function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBiblioteca, onMisCasos, onMiCuenta, onMiPerfil }: any) {
   const [casos, setCasos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (!currentUser) return;
     const fetchCasos = async () => {
@@ -768,22 +770,56 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
     fetchCasos();
   }, [currentUser]);
 
+  const casosActivos = casos.filter(c => !['RESPONDIDA', 'CERRADA'].includes(c.estado)).length;
+  const casosRespondidos = casos.filter(c => c.estado === 'RESPONDIDA').length;
+  const honorariosPendientes = casos.filter(c => c.pago_estado === 'pendiente' && c.honorario_arquitecto).reduce((acc, c) => acc + (c.honorario_arquitecto || 0), 0);
+  const honorariosCobrados = casos.filter(c => c.pago_estado === 'pagado' && c.honorario_arquitecto).reduce((acc, c) => acc + (c.honorario_arquitecto || 0), 0);
+
   return (
     <div style={styles.container}>
       <div style={styles.engineeringHeader}>
-        <span>PANEL ARQUITECTO</span>
+        <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>PANEL ARQUITECTO</span>
         <button onClick={onLogout} style={styles.btnBack}>Cerrar sesión</button>
       </div>
-     <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Arquitecto'}</h2>
-      <button onClick={onBiblioteca} style={{ ...styles.btnSecondaryOutline, marginBottom: '20px' }}>Biblioteca de documentos</button>
-      <label style={styles.label}>CASOS ASIGNADOS</label>
-      {loading ? <p style={{ color: THEME.gray }}>Cargando casos...</p> : (
+      <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Arquitecto'}</h2>
+
+      {/* Tarjetas resumen */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '30px' }}>
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>CASOS ACTIVOS</p>
+          <p style={{ fontSize: '28px', fontWeight: 900, color: THEME.primary }}>{loading ? '—' : casosActivos}</p>
+        </div>
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>RESPONDIDOS</p>
+          <p style={{ fontSize: '28px', fontWeight: 900, color: '#2E7D32' }}>{loading ? '—' : casosRespondidos}</p>
+        </div>
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>HONORARIOS PENDIENTES</p>
+          <p style={{ fontSize: '20px', fontWeight: 900, color: THEME.primary }}>{loading ? '—' : `$${honorariosPendientes.toLocaleString('es-UY')}`}</p>
+        </div>
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>HONORARIOS COBRADOS</p>
+          <p style={{ fontSize: '20px', fontWeight: 900, color: '#2E7D32' }}>{loading ? '—' : `$${honorariosCobrados.toLocaleString('es-UY')}`}</p>
+        </div>
+      </div>
+
+      {/* Navegación */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '30px' }}>
+        <button onClick={onMisCasos} style={styles.btnSecondaryOutline}>Mis Casos</button>
+        <button onClick={onMiCuenta} style={styles.btnSecondaryOutline}>Mi Cuenta</button>
+        <button onClick={onBiblioteca} style={styles.btnSecondaryOutline}>Biblioteca</button>
+        <button onClick={onMiPerfil} style={styles.btnSecondaryOutline}>Mi Perfil</button>
+      </div>
+
+      {/* Casos recientes */}
+      <label style={styles.label}>CASOS RECIENTES</label>
+      {loading ? <p style={{ color: THEME.gray }}>Cargando...</p> : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           {casos.length === 0 ? (
             <div style={{ ...styles.cardInfo, border: THEME.border, textAlign: 'center' }}>
               <p style={{ color: THEME.gray }}>No tenés casos asignados actualmente.</p>
             </div>
-          ) : casos.map(c => (
+          ) : casos.slice(0, 3).map(c => (
             <div key={c.id} style={{ ...styles.itemCase, border: THEME.border }} onClick={() => onCase(c.id)}>
               <strong>{c.usuario_nombre || 'Usuario'}</strong>
               <p style={{ fontSize: '12px', color: THEME.gray, marginTop: '3px' }}>{c.descripcion?.substring(0, 60)}...</p>
@@ -795,7 +831,6 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
     </div>
   );
 }
-
 // --- PANTALLAS RESTANTES SIN CAMBIOS ---
 function ScreenOpciones({ onSelect, onBack }: any) {
   const options = [
@@ -1328,6 +1363,177 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
   );
 }
 
+// --- PANEL ARQUITECTO MIS CASOS ---
+function PanelAMisCasos({ currentUser, onBack, onCase }: any) {
+  const [casos, setCasos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filtro, setFiltro] = useState<'todos' | 'activos' | 'respondidos'>('todos');
+  useEffect(() => {
+    if (!currentUser) return;
+    const fetch = async () => {
+      const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
+      const q = query(casosRef, where('arquitecto_asignado', '==', currentUser.uid));
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      setCasos(data);
+      setLoading(false);
+    };
+    fetch();
+  }, [currentUser]);
+  const casosFiltrados = casos.filter(c => {
+    if (filtro === 'activos') return !['RESPONDIDA', 'CERRADA'].includes(c.estado);
+    if (filtro === 'respondidos') return c.estado === 'RESPONDIDA';
+    return true;
+  });
+  return (
+    <div style={styles.container}>
+      <div style={styles.engineeringHeader}>
+        <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>MIS CASOS</span>
+        <button onClick={onBack} style={styles.btnBack}>← Volver</button>
+      </div>
+      <h2 style={styles.h2}>Bitácora de Casos</h2>
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '25px' }}>
+        {(['todos', 'activos', 'respondidos'] as const).map(f => (
+          <button key={f} onClick={() => setFiltro(f)} style={{ ...styles.btnSecondaryOutline, width: 'auto', padding: '8px 16px', fontSize: '11px', backgroundColor: filtro === f ? THEME.primary : 'transparent', color: filtro === f ? '#fff' : THEME.text, borderColor: filtro === f ? THEME.primary : THEME.text }}>
+            {f.charAt(0).toUpperCase() + f.slice(1)}
+          </button>
+        ))}
+      </div>
+      {loading ? <p style={{ color: THEME.gray }}>Cargando...</p> : casosFiltrados.length === 0 ? (
+        <div style={{ ...styles.cardInfo, border: THEME.border, textAlign: 'center' }}>
+          <p style={{ color: THEME.gray }}>No hay casos en esta categoría.</p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          {casosFiltrados.map(c => (
+            <div key={c.id} style={{ ...styles.cardInfo, border: THEME.border, cursor: 'pointer' }} onClick={() => onCase(c.id)}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <strong style={{ fontSize: '14px' }}>{c.usuario_nombre || 'Usuario'}</strong>
+                  <p style={{ fontSize: '12px', color: THEME.gray, margin: '4px 0' }}>{c.direccion_inmueble}</p>
+                  <p style={{ fontSize: '11px', color: THEME.gray }}>{c.descripcion?.substring(0, 80)}...</p>
+                </div>
+                <span style={{ fontSize: '10px', fontWeight: 900, color: THEME.primary, whiteSpace: 'nowrap', marginLeft: '10px' }}>{c.estado}</span>
+              </div>
+              <div style={{ display: 'flex', gap: '20px', marginTop: '10px', paddingTop: '10px', borderTop: `1px solid ${THEME.softGray}` }}>
+                <p style={{ fontSize: '11px', color: THEME.gray }}>Nivel: <strong>{c.nivel_servicio || 'Sin asignar'}</strong></p>
+                <p style={{ fontSize: '11px', color: THEME.gray }}>Asignado: <strong>{c.fecha_creacion?.toDate?.()?.toLocaleDateString('es-UY') || '—'}</strong></p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// --- PANEL ARQUITECTO MI CUENTA ---
+function PanelAMiCuenta({ currentUser, onBack }: any) {
+  const [casos, setCasos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (!currentUser) return;
+    const fetch = async () => {
+      const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
+      const q = query(casosRef, where('arquitecto_asignado', '==', currentUser.uid));
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      setCasos(data);
+      setLoading(false);
+    };
+    fetch();
+  }, [currentUser]);
+  const pendientes = casos.filter(c => c.pago_estado === 'pendiente' && c.honorario_arquitecto);
+  const pagados = casos.filter(c => c.pago_estado === 'pagado' && c.honorario_arquitecto);
+  const totalPendiente = pendientes.reduce((acc, c) => acc + (c.honorario_arquitecto || 0), 0);
+  const totalCobrado = pagados.reduce((acc, c) => acc + (c.honorario_arquitecto || 0), 0);
+  return (
+    <div style={styles.container}>
+      <div style={styles.engineeringHeader}>
+        <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>MI CUENTA</span>
+        <button onClick={onBack} style={styles.btnBack}>← Volver</button>
+      </div>
+      <h2 style={styles.h2}>Estado de Pagos</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '30px' }}>
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>PENDIENTE DE COBRO</p>
+          <p style={{ fontSize: '24px', fontWeight: 900, color: THEME.primary }}>${totalPendiente.toLocaleString('es-UY')}</p>
+        </div>
+        <div style={{ ...styles.cardInfo, border: THEME.border }}>
+          <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>TOTAL COBRADO</p>
+          <p style={{ fontSize: '24px', fontWeight: 900, color: '#2E7D32' }}>${totalCobrado.toLocaleString('es-UY')}</p>
+        </div>
+      </div>
+      <div style={{ ...styles.cardInfo, border: THEME.border }}>
+        <label style={styles.label}>DETALLE POR CASO</label>
+        {loading ? <p style={{ color: THEME.gray }}>Cargando...</p> : casos.length === 0 ? (
+          <p style={{ color: THEME.gray, fontSize: '13px' }}>No hay casos asignados.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
+            {casos.map(c => (
+              <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: `1px solid ${THEME.softGray}`, borderRadius: '8px' }}>
+                <div>
+                  <strong style={{ fontSize: '13px' }}>{c.usuario_nombre || 'Usuario'}</strong>
+                  <p style={{ fontSize: '11px', color: THEME.gray, margin: '2px 0' }}>{c.direccion_inmueble}</p>
+                  <p style={{ fontSize: '11px', color: THEME.gray }}>Nivel: {c.nivel_servicio || 'Sin asignar'}</p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ fontSize: '14px', fontWeight: 900, color: c.pago_estado === 'pagado' ? '#2E7D32' : THEME.primary }}>
+                    {c.honorario_arquitecto ? `$${c.honorario_arquitecto.toLocaleString('es-UY')}` : 'Sin asignar'}
+                  </p>
+                  <span style={{ fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', backgroundColor: c.pago_estado === 'pagado' ? '#E8F5E9' : '#FFF3E0', color: c.pago_estado === 'pagado' ? '#2E7D32' : '#E65100' }}>
+                    {c.pago_estado === 'pagado' ? 'PAGADO' : 'PENDIENTE'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// --- PANEL ARQUITECTO MI PERFIL ---
+function PanelAMiPerfil({ currentUser, userProfile, onBack }: any) {
+  const [nombre, setNombre] = useState(userProfile?.nombre || '');
+  const [telefono, setTelefono] = useState(userProfile?.telefono || '');
+  const [direccion, setDireccion] = useState(userProfile?.direccion || '');
+  const [especialidad, setEspecialidad] = useState(userProfile?.especialidad || '');
+  const [guardando, setGuardando] = useState(false);
+  const [mensaje, setMensaje] = useState('');
+  const handleGuardar = async () => {
+    setGuardando(true);
+    try {
+      await updateDoc(doc(db, 'Usuarios', currentUser.uid), { nombre, telefono, direccion, especialidad });
+      setMensaje('✅ Perfil actualizado correctamente.');
+    } catch (e) {
+      setMensaje('❌ Error al guardar.');
+    }
+    setGuardando(false);
+  };
+  return (
+    <div style={styles.container}>
+      <div style={styles.engineeringHeader}>
+        <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>MI PERFIL</span>
+        <button onClick={onBack} style={styles.btnBack}>← Volver</button>
+      </div>
+      <h2 style={styles.h2}>Mi Perfil</h2>
+      <div style={{ ...styles.cardInfo, border: THEME.border }}>
+        <label style={styles.label}>DATOS PERSONALES</label>
+        <p style={{ fontSize: '12px', color: THEME.gray, marginBottom: '20px' }}>Email: {currentUser?.email}</p>
+        <input placeholder="Nombre completo" value={nombre} onChange={e => setNombre(e.target.value)} style={{ ...styles.inputFieldBold, marginBottom: '12px' }} />
+        <input placeholder="Teléfono" value={telefono} onChange={e => setTelefono(e.target.value)} style={{ ...styles.inputFieldBold, marginBottom: '12px' }} />
+        <input placeholder="Dirección" value={direccion} onChange={e => setDireccion(e.target.value)} style={{ ...styles.inputFieldBold, marginBottom: '12px' }} />
+        <input placeholder="Especialidad" value={especialidad} onChange={e => setEspecialidad(e.target.value)} style={{ ...styles.inputFieldBold, marginBottom: '20px' }} />
+        {mensaje && <p style={{ fontSize: '13px', color: mensaje.startsWith('✅') ? '#2E7D32' : THEME.primary, marginBottom: '15px' }}>{mensaje}</p>}
+        <button onClick={handleGuardar} disabled={guardando} style={{ ...styles.btnPrimary, opacity: guardando ? 0.7 : 1 }}>
+          {guardando ? 'Guardando...' : 'GUARDAR CAMBIOS'}
+        </button>
+      </div>
+    </div>
+  );
+}
 // --- PANEL BIBLIOTECA ---
 function PanelBiblioteca({ estudioId, onBack, isDirector }: any) {
   const [documentos, setDocumentos] = useState<any[]>([]);
