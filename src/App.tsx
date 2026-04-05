@@ -681,7 +681,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
       </div>
       <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Director'}</h2>
     <button onClick={onConsultas} style={{ ...styles.btnPrimary, marginBottom: '10px' }}>Ver todas las consultas</button>
-      display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '30px', width: '100%'
+      display: 'flex', gap: '8px', marginBottom: '30px', width: '100%'
         <button onClick={onTeam} style={{ ...styles.btnSecondaryOutline }}>Gestión de equipo</button>
         <button onClick={onConfig} style={{ ...styles.btnSecondaryOutline }}>Configuración</button>           <button onClick={onBiblioteca} style={{ ...styles.btnSecondaryOutline }}>Biblioteca</button>
       </div>
