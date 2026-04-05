@@ -1378,7 +1378,7 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
           <thead>
             <tr style={{ borderBottom: '2px solid #E5E5E7' }}>
               {['Nivel', 'Servicio', 'Descripcion', 'Precio UYU', 'Precio USD', 'Estado'].map(h => (
-                <th key={h} style={{ padding: '10px 12px', textAlign: 'left', fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', textTransform: 'uppercase' }}>{h}</th>
+                <th key={h} style={{ padding: '6px 4px', textAlign: 'left', fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', textTransform: 'uppercase' }}>{h}</th>
               ))}
             </tr>
           </thead>
