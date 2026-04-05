@@ -1187,31 +1187,6 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                   {generandoIA ? 'Generando borrador...' : 'Generar borrador con IA'}
                 </button>
               )}
-              {caso.estado !== 'RESPONDIDA' && (
-                <button
-                  onClick={async () => {
-                    setGenerandoIA(true);
-                    try {
-                      const prompt = 'Sos un arquitecto con mas de 20 anos de experiencia, especializado en patologias edilicias, arquitectura, construccion y normativa edilicia. Tu expertise principal es el diagnostico y rehabilitacion de edificios de propiedad horizontal, con profundo conocimiento de la normativa vigente en Uruguay y la region. Analiza el siguiente caso y genera un borrador de diagnostico tecnico profesional. DESCRIPCION DEL PROBLEMA: ' + caso.descripcion + ' DIRECCION DEL INMUEBLE: ' + caso.direccion_inmueble + ' Si el caso refiere a una patologia edilicia: identificar la patologia mas probable con su denominacion tecnica, explicar las causas tecnicas mas frecuentes, evaluar el nivel de urgencia, redactarse de forma clara y profesional, tener entre 150 y 250 palabras, concluir con una recomendacion de actuacion. Si el caso refiere a otra consulta tecnica responde con criterio profesional con la misma extension cerrando con una recomendacion. No incluyas disclaimers ni menciones a la IA. Responde directamente con el diagnostico.';
-                      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + import.meta.env.VITE_GEMINI_API_KEY, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                      });
-                      const data = await res.json();
-                      const texto = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                      setDiagnostico(texto);
-                    } catch (e) {
-                      console.error('Error Gemini:', e);
-                    }
-                    setGenerandoIA(false);
-                  }}
-                  disabled={generandoIA}
-                  style={{ ...styles.btnSecondaryOutline, width: '100%', marginBottom: '10px', fontSize: '12px', padding: '10px' }}
-                >
-                  {generandoIA ? 'Generando borrador...' : 'Generar borrador con IA'}
-                </button>
-              )}
               <textarea
                 placeholder="Redacta tu respuesta tecnica profesional..."
                 value={diagnostico}
