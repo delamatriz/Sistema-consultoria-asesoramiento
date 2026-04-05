@@ -1168,9 +1168,9 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                     setGenerandoIA(true);
                     try {
                       const prompt = 'Sos un arquitecto con mas de 20 anos de experiencia, especializado en patologias edilicias, arquitectura, construccion y normativa edilicia. Tu expertise principal es el diagnostico y rehabilitacion de edificios de propiedad horizontal, con profundo conocimiento de la normativa vigente en Uruguay y la region. Analiza el siguiente caso y genera un borrador de diagnostico tecnico profesional. DESCRIPCION DEL PROBLEMA: ' + caso.descripcion + ' DIRECCION DEL INMUEBLE: ' + caso.direccion_inmueble + ' Si el caso refiere a una patologia edilicia: identificar la patologia mas probable con su denominacion tecnica, explicar las causas tecnicas mas frecuentes, evaluar el nivel de urgencia, redactarse de forma clara y profesional, tener entre 150 y 250 palabras, concluir con una recomendacion de actuacion. Si el caso refiere a otra consulta tecnica responde con criterio profesional con la misma extension cerrando con una recomendacion. No incluyas disclaimers ni menciones a la IA. Responde directamente con el diagnostico.';
-                      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=' + import.meta.env.VITE_GEMINI_API_KEY, {
+                      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', 'X-goog-api-key': import.meta.env.VITE_GEMINI_API_KEY },
                         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                       });
                       const data = await res.json();
