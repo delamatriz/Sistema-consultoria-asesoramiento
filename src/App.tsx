@@ -682,9 +682,9 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
       <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Director'}</h2>
     <button onClick={onConsultas} style={{ ...styles.btnPrimary, marginBottom: '10px' }}>Ver todas las consultas</button>
       <div style={{ display: 'flex', gap: '8px', marginBottom: '30px', width: '100%' }}>
-        <button onClick={onTeam} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '13px' }}>Gestión de equipo</button>
-        <button onClick={onConfig} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '13px' }}>Configuración</button> 
-        <button onClick={onBiblioteca} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '13px' }}>Biblioteca</button>
+        <button onClick={onTeam} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '10px' }}>Gestión de equipo</button>
+        <button onClick={onConfig} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '10px' }}>Configuración</button> 
+        <button onClick={onBiblioteca} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '10px' }}>Biblioteca</button>
       </div>
       <label style={styles.label}>CASOS RECIENTES</label>
       {loading ? <p style={{ color: THEME.gray }}>Cargando casos...</p> : (
