@@ -1830,7 +1830,7 @@ const handleEliminarArquitecto = async (uid: string) => {
       <h2 style={styles.h2}>EQUIPO TÉCNICO · ADMINISTRACIÓN</h2>
       <p style={styles.subtitleBold}>Control de capital profesional, roles y carga operativa.</p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginTop: '20px' }}>
 
         {/* Izquierda — Gestión de carga */}
         <div style={{ ...styles.cardInfo, border: THEME.border }}>
