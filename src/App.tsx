@@ -1385,8 +1385,8 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
           <tbody>
             {servicios.map(s => (
               <tr key={s.id} style={{ borderBottom: '1px solid #E5E5E7' }}>
-                <td style={{ padding: '6px 4px', fontSize: '11px', fontWeight: 900, color: '#B21F24' }}>{s.nivel}</td>
-                <td style={{ padding: '6px 4px', fontSize: '10px', fontWeight: 700 }}>{s.nombre}</td>
+                <td style={{ padding: '6px 4px', fontSize: '13px', fontWeight: 900, color: '#B21F24' }}>{s.nivel}</td>
+                <td style={{ padding: '6px 4px', fontSize: '13px', fontWeight: 700 }}>{s.nombre}</td>
                 <td style={{ padding: '6px 4px', fontSize: '10px', color: '#6E6E73', maxWidth: '200px' }}>{s.descripcion}</td>
                 <td style={{ padding: '6px 4px' }}>
                   {s.gratuito ? (
