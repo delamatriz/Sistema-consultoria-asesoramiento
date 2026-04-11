@@ -1044,7 +1044,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
       </div>
       <h2 style={styles.h2}>FICHA DE CONSULTA TECNICA</h2>
       <p style={styles.subtitleBold}>Analisis de evidencia tecnica y validacion del diagnostico.</p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '15px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginTop: '15px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           <div style={{ ...styles.cardInfo, border: THEME.border }}>
             <label style={styles.label}>DATOS DEL EXPEDIENTE</label>
