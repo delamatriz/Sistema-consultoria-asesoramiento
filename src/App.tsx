@@ -524,8 +524,8 @@ function ScreenHistorial({ currentUser, onSelect, onBack }: any) {
 // --- PANTALLA DETALLE ---
 function ScreenDetalle({ caseId, onBack, onEscalate }: any) {
   const [caso, setCaso] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState(true); const [actuaciones, setActuaciones] = useState<any[]>([]);
+  const [actuaciones, setActuaciones] = useState<any[]>([]);
   useEffect(() => {
     if (!caseId) { setLoading(false); return; }
     getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId)).then(d => {
