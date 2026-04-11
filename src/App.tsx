@@ -531,8 +531,7 @@ function ScreenDetalle({ caseId, onBack, onEscalate }: any) {
       if (d.exists()) setCaso({ id: d.id, ...d.data() });
       setLoading(false);
     });
-  }, [caseId]);
-
+  }, [caseId]); useEffect(() => { if (!caseId) return; getDocs(collection(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId, 'Actuaciones')).then(snap => { setActuaciones(snap.docs.map(d => ({ id: d.id, ...d.data() }))); }); }, [caseId]);
   if (loading) return <div style={styles.container}><p style={{ color: '#6E6E73' }}>Cargando...</p></div>;
 
   return (
