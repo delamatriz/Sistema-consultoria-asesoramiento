@@ -1377,7 +1377,7 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
         <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
           <thead>
             <tr style={{ borderBottom: '2px solid #E5E5E7' }}>
-              {['Nivel', 'Servicio', 'Descripcion', 'Precio UYU', 'Precio USD', 'Estado'].map(h => (
+              {['Nivel', 'Servicio', 'Descripcion', 'Precio UYU', 'Precio USD'].map(h => (
                 <th key={h} style={{ padding: '6px 4px', textAlign: 'left', fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', textTransform: 'uppercase' }}>{h}</th>
               ))}
             </tr>
@@ -1416,12 +1416,7 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
                 <td style={{ padding: '12px', fontSize: '13px', fontWeight: 700, color: '#6E6E73' }}>
                   {s.gratuito ? '-' : s.a_determinar ? '-' : s.porcentaje ? '-' : 'U$S ' + (s.precio_uyu / tipoCambio).toFixed(0)}
                 </td>
-                <td style={{ padding: '12px' }}>
-                  <span style={{ fontSize: '10px', fontWeight: 900, padding: '4px 8px', borderRadius: '4px', backgroundColor: s.activo ? '#E8F5E9' : '#FFEBEE', color: s.activo ? '#2E7D32' : '#B21F24', cursor: 'pointer' }}
-                    onClick={() => updatePrecio(s.id, 'activo', !s.activo)}>
-                    {s.activo ? 'ACTIVO' : 'INACTIVO'}
-                  </span>
-                </td>
+              
               </tr>
             ))}
           </tbody>
