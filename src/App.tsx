@@ -1374,7 +1374,7 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
 
       <div style={{ ...styles.cardInfo, border: '2px solid #1D1D1F' }}>
         <label style={styles.label}>TABLA DE ARANCELES PROFESIONALES</label>
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px', marginLeft: '0'}}>
           <thead>
             <tr style={{ borderBottom: '2px solid #E5E5E7' }}>
               {['Nivel', 'Servicio', 'Descripcion', 'UYU', 'USD'].map(h => (
