@@ -831,31 +831,7 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
   );
 }
 // --- PANTALLAS RESTANTES SIN CAMBIOS ---
-function ScreenOpciones({ onSelect, onBack }: any) {
-  const options = [
-    { id: 'video', title: 'Video Consulta Técnica', price: '$4.500', desc: 'Aclaración de dudas en tiempo real mediante videollamada.' },
-    { id: 'informe', title: 'Informe Técnico Ampliado', price: '$8.500', desc: 'Documento robusto de alta ingeniería que detalla causas y riesgos.' },
-    { id: 'visita', title: 'Visita Técnica Presencial', price: '$12.000', desc: 'Relevamiento in situ para un diagnóstico confirmado e inspección técnica.' }
-  ];
-  return (
-    <div style={styles.container}>
-      <button onClick={onBack} style={styles.btnBack}>← Volver</button>
-      <h2 style={styles.h2}>OPCIONES DE ASESORAMIENTO</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        {options.map(opt => (
-          <div key={opt.id} style={{ ...styles.cardEng, border: THEME.border }} onClick={() => onSelect(opt)}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <strong>{opt.title}</strong>
-              <span style={styles.priceTag}>{opt.price}</span>
-            </div>
-            <p style={{ fontSize: '13px', color: THEME.gray, marginTop: '8px' }}>{opt.desc}</p>
-            <button style={{ ...styles.btnPrimary, height: '40px', marginTop: '15px', fontSize: '11px' }}>Seleccionar Servicio</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+function ScreenOpciones({ caseId, onSelect, onBack }: any) { const SERVICIOS: any = {'Nivel 1': {title:'Informe Tecnico',price:'$3.800',desc:'Documento tecnico con causas y recomendaciones.'},'Nivel 1+':{title:'Informe Ampliado',price:'$5.600',desc:'Informe tecnico detallado con analisis profundo.'},'Nivel 2':{title:'Videollamada Tecnica',price:'$3.500',desc:'Visita teledirigida en tiempo real.'},'Nivel 3':{title:'Visita Presencial con Informe',price:'$6.800',desc:'Relevamiento in situ y diagnostico confirmado.'},'Nivel 4a':{title:'Pautas Terapeuticas',price:'$4.500',desc:'Guia tecnica para reparaciones.'},'Nivel 4b':{title:'Memoria Descriptiva',price:'$12.600',desc:'Documentacion tecnica para obras de mayor entidad.'},'Nivel 5':{title:'Costos de Obra',price:'$15.000',desc:'Solicitud y gestion de presupuestos.'},'Nivel 6':{title:'Supervision de Obra',price:'10%',desc:'Acompanamiento profesional durante la ejecucion.'},'Nivel 7':{title:'Otras Actuaciones',price:'$3.500',desc:'Gestion tecnica personalizada.'}}; const [rec, setRec] = React.useState(''); React.useEffect(() => { if (!caseId) return; getDocs(collection(db,'Estudios',ESTUDIO_ID,'Casos',caseId,'Actuaciones')).then(snap => { const docs = snap.docs.map(d => d.data()); if (docs.length > 0) setRec(docs[docs.length-1].recomendacion || ''); }); }, [caseId]); const s = SERVICIOS[rec]; return (<div style={styles.container}><button onClick={onBack} style={styles.btnBack}>Volver</button><h2 style={styles.h2}>OPCIONES DE ASESORAMIENTO</h2>{s ? (<div style={{...styles.cardEng,border:THEME.border}}><div style={{display:'flex',justifyContent:'space-between'}}><strong>{s.title}</strong><span style={styles.priceTag}>{s.price}</span></div><p style={{fontSize:'13px',color:THEME.gray,marginTop:'8px'}}>{s.desc}</p><button onClick={() => onSelect({id:rec,...s})} style={{...styles.btnPrimary,height:'40px',marginTop:'15px',fontSize:'11px'}}>Contratar este servicio</button></div>) : (<p style={{color:THEME.gray,fontStyle:'italic'}}>No hay recomendaciones activas en este momento.</p>)}</div>); }
 
 function ScreenOpcionesActuacion({ onSelect, onBack }: any) {
   const actuaciones = [
