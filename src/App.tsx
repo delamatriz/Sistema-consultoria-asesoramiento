@@ -881,23 +881,7 @@ function ScreenPago({ service, onConfirm, onBack }: any) {
   );
 }
 
-function ScreenMetodoPago({ onBack }: any) {
-  return (
-    <div style={styles.container}>
-      <button onClick={onBack} style={styles.btnBack}>← Volver</button>
-      <h2 style={styles.h2}>FORMA DE PAGO</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <div style={{ ...styles.itemCase, border: THEME.border, padding: '25px', cursor: 'default' }}><strong>💳 Tarjeta de Crédito / Débito</strong></div>
-        <div style={{ ...styles.itemCase, border: THEME.border, padding: '25px', cursor: 'default' }}><strong>🏦 Transferencia Bancaria Directa</strong></div>
-        <div style={{ ...styles.itemCase, border: THEME.border, padding: '25px', cursor: 'default' }}><strong>📱 Mercado Pago</strong></div>
-        <div style={{ ...styles.itemCase, border: THEME.border, padding: '25px', cursor: 'default' }}><strong>🏪 ABITAB / RedPagos</strong></div>
-      </div>
-      <div style={{ marginTop: '20px', padding: '15px', backgroundColor: THEME.white, border: `1px solid ${THEME.softGray}`, borderRadius: '8px' }}>
-        <p style={{ fontSize: '13px', color: THEME.gray, textAlign: 'center' }}>El estudio se pondrá en contacto para coordinar el pago y confirmar el servicio.</p>
-      </div>
-    </div>
-  );
-}
+function ScreenMetodoPago({ caseId, currentUser, selectedService, onBack, onDone }: any) { const [guardando, setGuardando] = React.useState(false); const [confirmado, setConfirmado] = React.useState(false); const handlePago = async (metodo: string) => { if (!caseId || !currentUser) return; setGuardando(true); await addDoc(collection(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId, 'Actuaciones'), { nivel_servicio: selectedService?.id || '', nombre_servicio: selectedService?.title || '', precio: selectedService?.price || '', metodo_pago: metodo, pago_usuario: 'pendiente', pago_arquitecto: 'pendiente', estado: 'solicitada', fecha: new Date(), usuario_id: currentUser.uid, respuesta_texto: '', recomendacion: '', documento_url: '', honorario_arquitecto: 0 }); await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), { estado: 'EN ANALISIS' }); setGuardando(false); setConfirmado(true); }; if (confirmado) return (<div style={styles.container}><h2 style={styles.h2}>SOLICITUD ENVIADA</h2><div style={{...styles.cardInfo, border: '2px solid #2E7D32', marginTop: '20px'}}><p style={{color:'#2E7D32', fontWeight:700, fontSize:'15px', margin:'0 0 8px 0'}}>Tu solicitud fue registrada correctamente.</p><p style={{color:THEME.gray, fontSize:'13px', margin:0}}>El estudio se pondra en contacto para coordinar el pago y confirmar el servicio.</p></div><button onClick={onDone} style={{...styles.btnPrimary, marginTop:'20px'}}>Volver a mis consultas</button></div>); return (<div style={styles.container}><button onClick={onBack} style={styles.btnBack}>Volver</button><h2 style={styles.h2}>FORMA DE PAGO</h2><p style={styles.subtitleBold}>Selecciona como vas a abonar el servicio.</p><div style={{display:'flex',flexDirection:'column',gap:'15px'}}><div style={{...styles.itemCase,border:THEME.border,padding:'25px',cursor:'pointer'}} onClick={() => handlePago('Tarjeta')}><strong>Tarjeta de Credito / Debito</strong></div><div style={{...styles.itemCase,border:THEME.border,padding:'25px',cursor:'pointer'}} onClick={() => handlePago('Transferencia')}><strong>Transferencia Bancaria</strong></div><div style={{...styles.itemCase,border:THEME.border,padding:'25px',cursor:'pointer'}} onClick={() => handlePago('MercadoPago')}><strong>Mercado Pago</strong></div><div style={{...styles.itemCase,border:THEME.border,padding:'25px',cursor:'pointer'}} onClick={() => handlePago('ABITAB')}><strong>ABITAB / RedPagos</strong></div></div>{guardando && <p style={{color:THEME.gray,marginTop:'15px'}}>Registrando solicitud...</p>}</div>); }
 
 function ScreenSeguimiento({ caseId, onBack, onActuaciones }: any) {
   const [caso, setCaso] = useState<any>(null);
