@@ -1165,7 +1165,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 style={{ ...styles.textareaBold, minHeight: '100px' }}
               />
             </div>
-          )} {isDirectorView && caseId && <ActuacionesDirector caseId={caseId} />}
+          )} 
           {!isDirectorView && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {enviado || caso.estado === 'RESPONDIDA' ? (
