@@ -1472,7 +1472,8 @@ function PanelAMiCuenta({ currentUser, onBack }: any) {
       const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
       const q = query(casosRef, where('arquitecto_asignado', '==', currentUser.uid));
       const snapshot = await getDocs(q);
-      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      const ORDEN_ARQ: Record<string, number> = { 'NUEVO': 0, 'PAGO PENDIENTE': 1, 'EN ANALISIS': 2, 'RESPONDIDA': 3 };
+      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a: any, b: any) => (ORDEN_ARQ[a.estado] ?? 2) - (ORDEN_ARQ[b.estado] ?? 2) || (b.fecha_creacion?.toMillis?.() ?? 0) - (a.fecha_creacion?.toMillis?.() ?? 0));
       setCasos(data);
       setLoading(false);
     };
