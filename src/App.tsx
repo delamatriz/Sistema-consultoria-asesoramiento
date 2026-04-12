@@ -944,8 +944,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
         setDiagnostico(data.diagnostico || '');
       }
     });
-  }, [caseId]);
-
+  }, [caseId]); useEffect(() => { if (!caseId) return; getDocs(collection(db,'Estudios',ESTUDIO_ID,'Casos',caseId,'Actuaciones')).then(snap => { setActuaciones(snap.docs.map(d => ({id:d.id,...d.data()}))); }); }, [caseId]);
   const handleValidarYNotificar = async () => {
     if (!diagnostico.trim()) return;
     setGuardando(true);
