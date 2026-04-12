@@ -611,7 +611,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
       const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
       const snapshot = await getDocs(casosRef);
       const ORDEN = { 'NUEVO': 0, 'PAGO PENDIENTE': 1, 'EN ANALISIS': 2, 'RESPONDIDA': 3 };
-      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a: any, b: any) => (ORDEN[a.estado] ?? 2) - (ORDEN[b.estado] ?? 2) || (b.fecha_creacion?.toMillis?.() ?? 0) - (a.fecha_creacion?.toMillis?.() ?? 0));
       setCasos(data);
 
       const arqQuery = query(
