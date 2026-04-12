@@ -610,6 +610,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
     try {
       const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
       const snapshot = await getDocs(casosRef);
+      const ORDEN = { 'NUEVO': 0, 'PAGO PENDIENTE': 1, 'EN ANALISIS': 2, 'RESPONDIDA': 3 };
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       setCasos(data);
 
