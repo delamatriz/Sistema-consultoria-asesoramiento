@@ -1254,6 +1254,7 @@ function PanelGConsultas({ onCase, onBack }: any) {
   );
 }
 
+const SERVICIOS_DEFAULT = [{id:'n0',nivel:'Nivel 0',nombre:'Consulta Inicial',precio_uyu:0,gratuito:true},{id:'n1',nivel:'Nivel 1',nombre:'Informe Tecnico',precio_uyu:3800},{id:'n1p',nivel:'Nivel 1+',nombre:'Informe Ampliado',precio_uyu:5600},{id:'n2',nivel:'Nivel 2',nombre:'Videollamada Tecnica',precio_uyu:3500},{id:'n3',nivel:'Nivel 3',nombre:'Visita Presencial con Informe',precio_uyu:6800},{id:'n4a',nivel:'Nivel 4a',nombre:'Pautas Terapeuticas',precio_uyu:4500},{id:'n4b',nivel:'Nivel 4b',nombre:'Memoria Descriptiva',precio_uyu:12600},{id:'n5',nivel:'Nivel 5',nombre:'Costos de Obra',precio_uyu:15000},{id:'n6',nivel:'Nivel 6',nombre:'Supervision de Obra',precio_uyu:0,porcentaje:true},{id:'n7',nivel:'Nivel 7',nombre:'Otras Actuaciones',precio_uyu:3500}];
 function PanelEConfiguracion({ onBack, onTeam }: any) {
   const SERVICIOS_DEFAULT = [
     { id: 'n0', nivel: 'Nivel 0', nombre: 'Consulta Inicial', descripcion: 'Diagnostico preliminar orientativo', precio_uyu: 0, precio_usd: 0, gratuito: true, activo: true },
