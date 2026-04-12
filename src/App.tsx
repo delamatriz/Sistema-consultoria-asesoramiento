@@ -932,8 +932,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
   const [generandoIA, setGenerandoIA] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [enviado, setEnviado] = useState(false);
-  const [precioPropuesto, setPrecioPropuesto] = useState('');
-
+  const [precioPropuesto, setPrecioPropuesto] = useState(''); const [actuaciones, setActuaciones] = useState<any[]>([]);
   useEffect(() => {
     if (!caseId) return;
     getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId)).then(d => {
@@ -1166,7 +1165,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 style={{ ...styles.textareaBold, minHeight: '100px' }}
               />
             </div>
-          )}
+          )} {isDirectorView && caseId && <ActuacionesDirector caseId={caseId} />}
           {!isDirectorView && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {enviado || caso.estado === 'RESPONDIDA' ? (
