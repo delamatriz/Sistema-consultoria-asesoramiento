@@ -787,15 +787,15 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
         <div style={{ padding: '12px', backgroundColor: '#FFFFFF', borderRadius: '8px', border: THEME.border }}>
           <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>CASOS ACTIVOS</p>
-          <p style={{ fontSize: '28px', fontWeight: 900, color: THEME.primary }}>{loading ? '—' : casosActivos}</p>
+          <p style={{ fontSize: '20px', fontWeight: 900, color: THEME.primary }}>{loading ? '—' : casosActivos}</p>
         </div>
         <div style={{ padding: '12px', backgroundColor: '#FFFFFF', borderRadius: '8px', border: THEME.border }}>
           <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>RESPONDIDOS</p>
-          <p style={{ fontSize: '28px', fontWeight: 900, color: '#2E7D32' }}>{loading ? '—' : casosRespondidos}</p>
+          <p style={{ fontSize: '20px', fontWeight: 900, color: '#2E7D32' }}>{loading ? '—' : casosRespondidos}</p>
         </div>
         <div style={{ padding: '12px', backgroundColor: '#FFFFFF', borderRadius: '8px', border: THEME.border }}>
           <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>HONORARIOS PENDIENTES</p>
-          <p style={{ fontSize: '20px', fontWeight: 900, color: THEME.primary }}>{loading ? '—' : `$${honorariosPendientes.toLocaleString('es-UY')}`}</p>
+          <p style={{ fontSize: '16px', fontWeight: 900, color: THEME.primary }}>{loading ? '—' : `$${honorariosPendientes.toLocaleString('es-UY')}`}</p>
         </div>
         <div style={{ padding: '12px', backgroundColor: '#FFFFFF', borderRadius: '8px', border: THEME.border }}>
           <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray, marginBottom: '8px' }}>HONORARIOS COBRADOS</p>
