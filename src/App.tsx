@@ -954,7 +954,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
       await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), {
         diagnostico, nota_interna: notaInterna,
         estado: 'RESPONDIDA', fecha_respuesta: serverTimestamp()
-      });
+      }); await addDoc(collection(db,'Estudios',ESTUDIO_ID,'Casos',caseId,'Actuaciones'),{nivel_servicio:'Nivel 0',nombre_servicio:'Consulta Inicial',respuesta_texto:diagnostico,recomendacion:caso?.recomendacion||'',documento_url:'',honorario_arquitecto:0,pago_usuario:'pagado',pago_arquitecto:'pagado',estado:'completada',fecha:new Date(),arquitecto_id:currentUser?.uid||''});
    setEnviado(true);
       setCaso((prev: any) => ({ ...prev, estado: 'RESPONDIDA' }));
       try {
