@@ -933,6 +933,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
   const [generandoIA, setGenerandoIA] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [enviado, setEnviado] = useState(false);
+  const [verTabla, setVerTabla] = useState(false);
   const [precioPropuesto, setPrecioPropuesto] = useState(''); const [actuaciones, setActuaciones] = useState<any[]>([]);
   useEffect(() => {
     if (!caseId) return;
