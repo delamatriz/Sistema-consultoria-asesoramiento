@@ -1129,7 +1129,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                       const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'X-goog-api-key': import.meta.env.VITE_GEMINI_API_KEY },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                        body: JSON.stringify({ contents: [{ parts: [...(caso.fotos_urls||[]).slice(0,3).map((url:string)=>({text:'Foto del caso: '+url})),{ text: prompt }] }] })
                       });
                       const data = await res.json();
                       const texto = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
