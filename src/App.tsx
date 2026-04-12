@@ -1176,6 +1176,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
               ) : (
                 <>
                   <div style={{ padding: '15px', border: '2px solid #1D1D1F', borderRadius: '8px', marginBottom: '10px' }}>
+                    <button onClick={() => setVerTabla(true)} style={{backgroundColor:'transparent',color:'#B21F24',border:'2px solid #B21F24',padding:'8px 16px',fontSize:'11px',fontWeight:900,cursor:'pointer',borderRadius:'6px',marginBottom:'12px',width:'100%'}}>VER TABLA DE PRECIOS</button>
                     <p style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', margin: '0 0 8px 0' }}>PRECIO PROPUESTO PARA ESTE CASO (UYU)</p>
                     <input type='number' placeholder='Monto en UYU' value={precioPropuesto} onChange={e => setPrecioPropuesto(e.target.value)} style={{ width: '100%', padding: '10px', border: '2px solid #1D1D1F', borderRadius: '6px', fontSize: '14px', fontWeight: 700, boxSizing: 'border-box' }} />
                     {caso?.precio_validado ? (
