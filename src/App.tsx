@@ -54,6 +54,12 @@ export default function App() {
         setUserProfile(null);
       }
       setLoading(false);
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get('status');
+      if (status === 'approved') setView('pago_exitoso');
+      else if (status === 'pending') setView('pago_pendiente');
+      else if (status === 'rejected' || status === 'failure') setView('pago_fallido');
+      if (status) window.history.replaceState({}, '', '/');
     });
     return () => unsubscribe();
   }, []);
