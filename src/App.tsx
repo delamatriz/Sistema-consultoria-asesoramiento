@@ -133,6 +133,9 @@ export default function App() {
       case 'user_metodo_pago': return <ScreenMetodoPago caseId={selectedCaseId} currentUser={currentUser} selectedService={selectedService} onBack={() => navigate('user_opciones')} onDone={() => navigate('user_historial')} />;
       case 'user_seguimiento': return <ScreenSeguimiento caseId={selectedCaseId} onBack={() => navigate('user_historial')} onActuaciones={() => navigate('user_actuaciones')} />;
       case 'user_actuaciones': return <ScreenOpcionesActuacion onSelect={(service) => { setSelectedService(service); navigate('user_pago'); }} onBack={() => navigate('user_seguimiento')} />;
+      case 'pago_exitoso': return <ScreenPagoResultado tipo="exitoso" onVolver={() => navigate('user_historial')} />;
+      case 'pago_pendiente': return <ScreenPagoResultado tipo="pendiente" onVolver={() => navigate('user_historial')} />;
+      case 'pago_fallido': return <ScreenPagoResultado tipo="fallido" onVolver={() => navigate('user_historial')} />;  
       case 'user_perfil': return <ScreenPerfil userProfile={userProfile} onBack={() => navigate('user_home')} onLogout={handleLogout} />;
       case 'login_tecnico': return <ScreenLogin onLogin={handleLogin} onRegister={() => navigate('user_registro')} onForgot={() => navigate('user_recuperar')} error={authError} esProfesional={true} />;
       case 'arquitecto_biblioteca': return <PanelBiblioteca estudioId={ESTUDIO_ID} onBack={() => navigate('arquitecto_dashboard')} isDirector={false} />;
