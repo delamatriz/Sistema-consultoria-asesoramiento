@@ -30,9 +30,9 @@ exports.crearPreferenciaPago = onRequest(
             currency_id: "UYU"
           }],
           back_urls: {
-            success: "https://sistema-consultoria-asesoramiento.onrender.com/pago-exitoso",
-            failure: "https://sistema-consultoria-asesoramiento.onrender.com/pago-fallido",
-            pending: "https://sistema-consultoria-asesoramiento.onrender.com/pago-pendiente"
+            success: "https://sistema-consultoria-asesoramiento.onrender.com/?status=approved",
+            failure: "https://sistema-consultoria-asesoramiento.onrender.com/?status=rejected",
+            pending: "https://sistema-consultoria-asesoramiento.onrender.com/?status=pending"
           },
           external_reference: (caseId || "") + "|" + (actuacionId || ""),
           statement_descriptor: "DE LA MATRIZ"
