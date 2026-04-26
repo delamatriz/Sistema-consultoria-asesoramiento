@@ -4,7 +4,8 @@ import { db } from './firebase/config';
 
 const THEME = {
   primary: '#B21F24',
-  text: '#6E6E73',
+  text: '#1D1D1F',
+  button: '#6E6E73',
   background: '#F5F5F7',
   white: '#FFFFFF',
   gray: '#86868B',
@@ -93,7 +94,7 @@ export default function PanelPagos({ estudioId, onBack }: any) {
     justifyContent: 'space-between',
     marginBottom: '20px',
     paddingBottom: '15px',
-    borderBottom: '2px solid ' + THEME.text,
+    borderBottom: '2px solid ' + THEME.button,
     fontSize: '11px',
     fontWeight: 900,
     letterSpacing: '1px',
@@ -102,8 +103,8 @@ export default function PanelPagos({ estudioId, onBack }: any) {
 
   const btnBack = {
     background: 'transparent',
-    border: '1px solid ' + THEME.text,
-    color: THEME.text,
+    border: '1px solid ' + THEME.button,
+    color: THEME.button,
     padding: '6px 12px',
     borderRadius: '4px',
     fontSize: '10px',
@@ -150,9 +151,9 @@ export default function PanelPagos({ estudioId, onBack }: any) {
                 padding: '10px',
                 fontSize: '10px',
                 fontWeight: 900,
-                border: activo ? '2px solid ' + THEME.text : '1px solid #E5E5E7',
-                backgroundColor: activo ? THEME.text : THEME.white,
-                color: activo ? THEME.white : THEME.text,
+                border: activo ? '2px solid ' + THEME.button : '1px solid #E5E5E7',
+                backgroundColor: activo ? THEME.button : THEME.white,
+                color: activo ? THEME.white : THEME.button,
                 borderRadius: '6px',
                 cursor: 'pointer',
               }}
@@ -193,7 +194,7 @@ export default function PanelPagos({ estudioId, onBack }: any) {
                   {a.pago_usuario !== 'pagado' && (
                     <button
                       onClick={() => marcarPagadoUsuario(a.caseId, a.id)}
-                      style={{ marginTop: '8px', padding: '6px 12px', fontSize: '10px', fontWeight: 700, backgroundColor: THEME.text, color: THEME.white, border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                      style={{ marginTop: '8px', padding: '6px 12px', fontSize: '10px', fontWeight: 700, backgroundColor: THEME.button, color: THEME.white, border: 'none', borderRadius: '4px', cursor: 'pointer' }}
                     >
                       Marcar como pagado
                     </button>
@@ -229,7 +230,7 @@ export default function PanelPagos({ estudioId, onBack }: any) {
                   {a.pago_arquitecto !== 'pagado' && (
                     <button
                       onClick={() => marcarPagadoArquitecto(a.caseId, a.id)}
-                      style={{ padding: '6px 12px', fontSize: '10px', fontWeight: 700, backgroundColor: THEME.text, color: THEME.white, border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                      style={{ padding: '6px 12px', fontSize: '10px', fontWeight: 700, backgroundColor: THEME.button, color: THEME.white, border: 'none', borderRadius: '4px', cursor: 'pointer' }}
                     >
                       Marcar como pagado al arquitecto
                     </button>
