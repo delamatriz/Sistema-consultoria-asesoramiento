@@ -10,6 +10,7 @@ import {
   doc, getDoc, setDoc, collection,
   addDoc, getDocs, query, where, serverTimestamp, updateDoc
 } from 'firebase/firestore';
+import PanelPagos from './PanelPagos';
 
 const ESTUDIO_ID = 'DWo8vQwXQ1ScnLc015zU';
 
