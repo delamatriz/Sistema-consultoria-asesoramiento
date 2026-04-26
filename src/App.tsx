@@ -155,6 +155,7 @@ export default function App() {
       case 'director_biblioteca': return <PanelBiblioteca estudioId={ESTUDIO_ID} onBack={() => navigate('director_dashboard')} isDirector={true} />;
       case 'director_auditoria': return <PanelBFicha caseId={selectedCaseId} onBack={() => navigate('director_dashboard')} isDirectorView={true} />;
       case 'director_consultas': return <PanelGConsultas onCase={(id) => navigate('director_auditoria', id)} onBack={() => navigate('director_dashboard')} />;
+      case 'director_pagos': return <PanelPagos estudioId={ESTUDIO_ID} onBack={() => navigate('director_dashboard')} />;  
       case 'arquitecto_tablero': return <PanelB1Tablero caseId={selectedCaseId} onBack={() => navigate('arquitecto_ficha')} onUserView={() => navigate('user_seguimiento')} />;
       case 'director_config': return <PanelEConfiguracion onBack={() => navigate('director_dashboard')} onTeam={() => navigate('director_team')} />;
       case 'director_team': return <PanelFGestionEquipo estudioId={ESTUDIO_ID} onBack={() => navigate('director_dashboard')} onAssignAction={() => navigate('director_dashboard')} />;
