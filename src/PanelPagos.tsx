@@ -4,7 +4,7 @@ import { db } from './firebase/config';
 
 const THEME = {
   primary: '#B21F24',
-  text: '#1D1D1F',
+  text: '#6E6E73',
   background: '#F5F5F7',
   white: '#FFFFFF',
   gray: '#86868B',
