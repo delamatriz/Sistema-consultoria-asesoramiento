@@ -604,7 +604,7 @@ function ScreenPerfil({ userProfile, onBack, onLogout }: any) {
 }
 
 // --- PANEL DIRECTOR ---
-function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, onLogout, onConsultas, onAssign, onBiblioteca }: any) {
+function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, onLogout, onConsultas, onAssign, onBiblioteca, onPagos }: any) {
   const [casos, setCasos] = useState<any[]>([]);
   const [arquitectos, setArquitectos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
