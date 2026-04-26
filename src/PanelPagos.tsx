@@ -94,7 +94,7 @@ export default function PanelPagos({ estudioId, onBack }: any) {
     justifyContent: 'space-between',
     marginBottom: '20px',
     paddingBottom: '15px',
-    borderBottom: '2px solid ' + THEME.button,
+    borderBottom: '2px solid ' + THEME.text,
     fontSize: '11px',
     fontWeight: 900,
     letterSpacing: '1px',
