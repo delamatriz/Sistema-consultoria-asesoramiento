@@ -695,6 +695,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
         <button onClick={onTeam} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '10px' }}>Gestión de equipo</button>
         <button onClick={onConfig} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '10px' }}>Configuración</button> 
         <button onClick={onBiblioteca} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '10px' }}>Biblioteca</button>
+        <button onClick={onPagos} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '10px' }}>Tesorería</button>
       </div>
       <label style={styles.label}>CASOS RECIENTES</label>
       {loading ? <p style={{ color: THEME.gray }}>Cargando casos...</p> : (
