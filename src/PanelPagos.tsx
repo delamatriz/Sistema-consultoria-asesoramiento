@@ -4,7 +4,7 @@ import { db } from './firebase/config';
 
 const THEME = {
   primary: '#B21F24',
-  text: '#3A3A3C',
+  text: '#1D1D1F',
   background: '#F5F5F7',
   white: '#FFFFFF',
   gray: '#86868B',
@@ -91,20 +91,19 @@ export default function PanelPagos({ estudioId, onBack }: any) {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '12px 16px',
-    backgroundColor: THEME.text,
-    color: THEME.white,
-    borderRadius: '8px',
     marginBottom: '20px',
+    paddingBottom: '15px',
+    borderBottom: '2px solid ' + THEME.text,
     fontSize: '11px',
     fontWeight: 900,
     letterSpacing: '1px',
+    color: THEME.text,
   };
 
   const btnBack = {
     background: 'transparent',
-    border: '1px solid rgba(255,255,255,0.3)',
-    color: THEME.white,
+    border: '1px solid ' + THEME.text,
+    color: THEME.text,
     padding: '6px 12px',
     borderRadius: '4px',
     fontSize: '10px',
