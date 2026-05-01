@@ -1051,6 +1051,12 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 <p style={{ fontSize: '13px', margin: 0 }}>{tiempoTranscurrido()}</p>
               </div>
             )}
+            {isDirectorView && caso.recomendacion && (
+              <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#B21F24', margin: '0 0 6px 0' }}>ACTUACION RECOMENDADA POR ARQUITECTO</p>
+                <p style={{ fontSize: '15px', fontWeight: 700, color: '#1D1D1F', margin: '0' }}>{caso.recomendacion}{({'Nivel 0':' — Consulta Inicial','Nivel 1':' — Informe Tecnico','Nivel 1+':' — Informe Ampliado','Nivel 2':' — Videollamada Tecnica','Nivel 3':' — Visita Presencial','Nivel 4a':' — Pautas Terapeuticas','Nivel 4b':' — Memoria Descriptiva','Nivel 5':' — Costos de Obra','Nivel 6':' — Supervision de Obra','Nivel 7':' — Otras Actuaciones'} as any)[caso.recomendacion] || ''}</p>
+              </div>
+            )}
             {isDirectorView && caso.precio_propuesto && (
               <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
                 <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#B21F24', margin: '0 0 6px 0' }}>PRECIO PROPUESTO POR ARQUITECTO</p>
