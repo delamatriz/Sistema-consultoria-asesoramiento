@@ -935,7 +935,7 @@ function ScreenSeguimiento({ caseId, onBack, onActuaciones }: any) {
       <div style={{ ...styles.cardInfo, border: '1px solid #E5E5E7', backgroundColor: '#F0F4FF' }}>
         <p style={{ fontSize: '14px', color: '#1565C0', fontWeight: 600, margin: 0 }}>Un arquitecto especialista esta analizando tu caso. Te avisaremos cuando el diagnostico este listo.</p>
       </div>
-      <button onClick={onActuaciones} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Ver actuaciones tecnicas</button>
+      <button onClick={onActuaciones} style={{ ...styles.btnPrimary, marginTop: '20px' }}>Ver actuaciones tecnica a seguir</button>
     </div>
   );
 }
