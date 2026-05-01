@@ -138,7 +138,7 @@ export default function App() {
       case 'user_opciones': return <ScreenOpciones caseId={selectedCaseId} onSelect={(service) => { setSelectedService(service); navigate('user_metodo_pago'); }} onBack={() => navigate('user_detalle')} />;
       case 'user_pago': return <ScreenPago service={selectedService} onConfirm={() => navigate('user_metodo_pago')} onBack={() => navigate('user_opciones')} />;
       case 'user_metodo_pago': return <ScreenMetodoPago caseId={selectedCaseId} currentUser={currentUser} selectedService={selectedService} onBack={() => navigate('user_opciones')} onDone={() => navigate('user_historial')} />;
-      case 'user_seguimiento': return <ScreenSeguimiento caseId={selectedCaseId} onBack={() => navigate('user_historial')} onActuaciones={() => navigate('user_actuaciones')} />;
+      case 'user_seguimiento': return <ScreenSeguimiento caseId={selectedCaseId} onBack={() => navigate('user_historial')} onActuaciones={() => navigate('user_opciones')} />;
       case 'user_actuaciones': return <ScreenOpcionesActuacion onSelect={(service) => { setSelectedService(service); navigate('user_pago'); }} onBack={() => navigate('user_seguimiento')} />;
       case 'pago_exitoso': return <ScreenPagoResultado tipo="exitoso" onVolver={() => navigate('user_historial')} />;
       case 'pago_pendiente': return <ScreenPagoResultado tipo="pendiente" onVolver={() => navigate('user_historial')} />;
