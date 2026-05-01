@@ -1074,7 +1074,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 <p style={{ fontSize: '13px', margin: 0 }}>{caso.arquitecto_nombre}</p>
               </div>
             )}
-            {isDirectorView && (
+            {false && isDirectorView && (
               <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
                 <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>NIVEL DE SERVICIO</p>
                 <select
