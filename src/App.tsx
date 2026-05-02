@@ -984,7 +984,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
     setGuardando(false);
   };
 
-  const handleGuardarNota = async () => {
+  const handleContactoInicial = async () => { if (enviandoContacto || contactoEnviado) return; setEnviandoContacto(true); try { const emailjs = await import('@emailjs/browser'); await emailjs.send('delamatriz','template_no31o7y',{asunto:'Tu consulta esta siendo analizada - De La Matriz',mensaje:mensajeContacto,destinatario:caso?.usuario_email||''},'d1aTzq_ytY2X8Mrdn'); await updateDoc(doc(db,'Estudios',ESTUDIO_ID,'Casos',caseId),{contacto_inicial_enviado:true}); setContactoEnviado(true); } catch(e) { console.error('Error enviando contacto:',e); alert('Error al enviar el mensaje. Intentalo nuevamente.'); } setEnviandoContacto(false); }; const handleGuardarNota = async () => {
     setGuardando(true);
     try {
       await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), {
