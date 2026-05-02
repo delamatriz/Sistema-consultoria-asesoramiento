@@ -833,7 +833,7 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
               <p style={{ color: THEME.gray }}>No tenés casos asignados actualmente.</p>
             </div>
           ) : casos.slice(0, 3).map(c => (
-            <div key={c.id} style={{ ...styles.itemCase, border: THEME.border }} onClick={() => onCase(c.id)}>
+            <div key={c.id} style={{ ...styles.itemCase, border: THEME.border, backgroundColor: c.estado === 'RESPONDIDA' ? '#E8F5E9' : c.estado === 'EN ANÁLISIS' || c.estado === 'EN ANALISIS' ? '#FFFDE7' : c.estado === 'NUEVO' ? '#E3F2FD' : c.estado === 'FINALIZADA SIN PAGO' ? '#FFEBEE' : '#F5F5F7' }} onClick={() => onCase(c.id)}>
               <strong>{c.usuario_nombre || 'Usuario'}</strong>
               <p style={{ fontSize: '12px', color: THEME.gray, marginTop: '3px' }}>{c.descripcion?.substring(0, 60)}...</p>
               <span style={{ fontSize: '10px', fontWeight: 900, color: THEME.primary }}>{c.estado}</span>
@@ -1265,7 +1265,7 @@ function PanelGConsultas({ onCase, onBack }: any) {
           {casosFiltrados.length === 0 ? (
             <p style={{ color: THEME.gray }}>No hay consultas con ese estado.</p>
           ) : casosFiltrados.map(c => (
-            <div key={c.id} style={{ ...styles.itemCase, border: THEME.border }} onClick={() => onCase(c.id)}>
+            <div key={c.id} style={{ ...styles.itemCase, border: THEME.border, backgroundColor: c.estado === 'RESPONDIDA' ? '#E8F5E9' : c.estado === 'EN ANÁLISIS' || c.estado === 'EN ANALISIS' ? '#FFFDE7' : c.estado === 'NUEVO' ? '#E3F2FD' : c.estado === 'FINALIZADA SIN PAGO' ? '#FFEBEE' : '#F5F5F7' }} onClick={() => onCase(c.id)}>
               <strong>{c.usuario_nombre || 'Usuario'}</strong>
               <p style={{ fontSize: '12px', color: THEME.gray }}>{c.descripcion?.substring(0, 60)}...</p>
               <span style={{ fontSize: '10px', fontWeight: 900, color: THEME.primary }}>{c.estado}</span>
