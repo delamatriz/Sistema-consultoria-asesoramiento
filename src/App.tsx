@@ -947,7 +947,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
   const [guardando, setGuardando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [verTabla, setVerTabla] = useState(false);
-  const [precioPropuesto, setPrecioPropuesto] = useState(''); const [actuaciones, setActuaciones] = useState<any[]>([]);
+  const [precioPropuesto, setPrecioPropuesto] = useState(''); const [actuaciones, setActuaciones] = useState<any[]>([]); const [mensajeContacto, setMensajeContacto] = useState(''); const [enviandoContacto, setEnviandoContacto] = useState(false); const [contactoEnviado, setContactoEnviado] = useState(false);
   useEffect(() => {
     if (!caseId) return;
     getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId)).then(d => {
