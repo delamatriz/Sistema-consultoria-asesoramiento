@@ -687,7 +687,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
     <div style={styles.container}>
       <div style={styles.engineeringHeader}>
         <span style={{fontSize:'clamp(9px, 2.5vw, 11px)', letterSpacing:'0.05em'}}>TORRE DE CONTROL — DIRECTOR</span>
-        <button onClick={onLogout} style={styles.btnBack}>Cerrar sesión</button>
+        <button onClick={onLogout} style={{...styles.btnBack, fontSize:'clamp(9px, 2.5vw, 11px)'}}>Cerrar sesión</button>
       </div>
       <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Director'}</h2>
     <button onClick={onConsultas} style={{ ...styles.btnPrimary, marginBottom: '9px' }}>Ver todas las consultas</button>
@@ -792,7 +792,7 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
     <div style={styles.container}>
       <div style={styles.engineeringHeader}>
         <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>PANEL ARQUITECTO</span>
-        <button onClick={onLogout} style={styles.btnBack}>Cerrar sesión</button>
+        <button onClick={onLogout} style={{...styles.btnBack, fontSize:'clamp(9px, 2.5vw, 11px)'}}>Cerrar sesión</button>
       </div>
       <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Arquitecto'}</h2>
 
