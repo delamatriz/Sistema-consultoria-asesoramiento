@@ -686,7 +686,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
   return (
     <div style={styles.container}>
       <div style={styles.engineeringHeader}>
-        <span>TORRE DE CONTROL — DIRECTOR</span>
+        <span style={{fontSize:'clamp(9px, 2.5vw, 11px)', letterSpacing:'0.05em'}}>TORRE DE CONTROL — DIRECTOR</span>
         <button onClick={onLogout} style={styles.btnBack}>Cerrar sesión</button>
       </div>
       <h2 style={styles.h2}>Bienvenido, {userProfile?.nombre || 'Director'}</h2>
