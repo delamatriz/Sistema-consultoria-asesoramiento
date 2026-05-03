@@ -1803,7 +1803,7 @@ const handleEliminarArquitecto = async (uid: string) => {
   return (
     <div style={styles.container}>
       <div style={styles.engineeringHeader}>
-        <button onClick={onBack} style={styles.btnBack}>← Dashboard</button>
+        <button onClick={onBack} style={styles.btnBack}>Volver</button>
         <span>Equipo Técnico</span>
       </div>
       <h2 style={styles.h2}>EQUIPO TÉCNICO · ADMINISTRACIÓN</h2>
