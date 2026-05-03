@@ -547,8 +547,8 @@ function ScreenDetalle({ caseId, onBack, onEscalate }: any) {
 
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
-        <button onClick={onBack} style={styles.btnBack}>Volver</button>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
+        
         <span>Expediente Tecnico Profesional</span>
       </div>
       <h2 style={styles.h2}>RESPUESTA DE LA CONSULTA</h2>
@@ -685,7 +685,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
 
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
         <span style={{fontSize:'clamp(10px, 2.8vw, 12px)', letterSpacing:'0.05em'}}>TORRE DE CONTROL — DIRECTOR</span>
         <button onClick={onLogout} style={{...styles.btnBack, fontSize:'clamp(9px, 2.5vw, 11px)'}}>Cerrar sesión</button>
       </div>
@@ -790,7 +790,7 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
 
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
         <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>PANEL ARQUITECTO</span>
         <button onClick={onLogout} style={{...styles.btnBack, fontSize:'clamp(9px, 2.5vw, 11px)'}}>Cerrar sesión</button>
       </div>
@@ -1007,7 +1007,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
 
   return (
     <div style={{ ...styles.container, backgroundColor: THEME.background }}>
-      <div style={styles.engineeringHeader}>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
         <button onClick={onBack} style={styles.btnBack}>Volver</button>
         <span>{isDirectorView ? 'Vista Director' : 'Ficha Tecnica'}</span>
         
@@ -1226,7 +1226,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
 function PanelB1Tablero({ caseId, onBack, onUserView }: any) {
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Tablero Técnico</span></div>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Tablero Técnico</span></div>
       <h2 style={styles.h2}>TABLERO DE SUPERVISIÓN</h2>
       <div style={{ ...styles.cardInfo, border: THEME.border }}>
         <p style={{ color: THEME.gray }}>Módulo de supervisión técnica — en desarrollo.</p>
@@ -1253,7 +1253,7 @@ function PanelGConsultas({ onCase, onBack }: any) {
   return (
 
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Historial Global</span></div>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}><button onClick={onBack} style={styles.btnBack}>← Volver</button><span>Historial Global</span></div>
     <h2 style={styles.h2}>TODAS LAS CONSULTAS</h2>
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
         {['TODOS', 'NUEVO', 'EN ANALISIS', 'RESPONDIDA'].map(f => (
@@ -1332,10 +1332,10 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
 
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
         <button onClick={onBack} style={styles.btnBack}>Volver</button>
-        <span>Configuracion del Estudio</span>
-        <button onClick={onTeam} style={{ ...styles.btnPrimary, width: 'auto', padding: '8px 16px', fontSize: '11px' }}>Gestion de Equipo</button>
+        <span style={{ fontSize: 'clamp(11px, 3vw, 14px)', whiteSpace: 'nowrap' }}>Configuracion del Estudio</span>
+        <button onClick={onBack} style={styles.btnBack}>Volver</button>
       </div>
       <h2 style={styles.h2}>CONFIGURACION DE PRECIOS Y SERVICIOS</h2>
       <p style={styles.subtitleBold}>Tabla de aranceles profesionales. Los precios en USD se calculan automaticamente segun el tipo de cambio.</p>
@@ -1443,7 +1443,7 @@ function PanelAMisCasos({ currentUser, onBack, onCase }: any) {
   });
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
         <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>MIS CASOS</span>
         <button onClick={onBack} style={styles.btnBack}>← Volver</button>
       </div>
@@ -1507,7 +1507,7 @@ function PanelAMiCuenta({ currentUser, onBack }: any) {
   const totalCobrado = pagados.reduce((acc, c) => acc + (c.honorario_arquitecto || 0), 0);
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
         <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>MI CUENTA</span>
         <button onClick={onBack} style={styles.btnBack}>← Volver</button>
       </div>
@@ -1572,7 +1572,7 @@ function PanelAMiPerfil({ currentUser, userProfile, onBack }: any) {
   };
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
         <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>MI PERFIL</span>
         <button onClick={onBack} style={styles.btnBack}>← Volver</button>
       </div>
@@ -1667,7 +1667,7 @@ function PanelBiblioteca({ estudioId, onBack, isDirector }: any) {
 
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
         <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: THEME.gray }}>BIBLIOTECA DE DOCUMENTOS</span>
         <button onClick={onBack} style={styles.btnBack}>← Volver</button>
       </div>
@@ -1802,7 +1802,7 @@ const handleEliminarArquitecto = async (uid: string) => {
 
   return (
     <div style={styles.container}>
-      <div style={styles.engineeringHeader}>
+      <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between' }}>
         <button onClick={onBack} style={styles.btnBack}>Volver</button>
         <span>Equipo Técnico</span>
       </div>
