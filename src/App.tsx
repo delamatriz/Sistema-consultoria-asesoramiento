@@ -1359,7 +1359,7 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
         <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px', marginLeft: '0'}}>
           <thead>
             <tr style={{ borderBottom: '2px solid #E5E5E7' }}>
-              {['Nivel', 'Servicio', 'Descripcion', 'UYU', 'USD'].map(h => (
+              {['Nivel', 'Servicio', 'UYU', 'USD'].map(h => (
                 <th key={h} style={{ padding: '4px 2px', textAlign: 'left', fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: '#6E6E73', textTransform: 'uppercase' }}>{h}</th>
               ))}
             </tr>
@@ -1369,7 +1369,7 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
               <tr key={s.id} style={{ borderBottom: '1px solid #E5E5E7' }}>
                 <td style={{ padding: '4px 2px', fontSize: '13px', fontWeight: 900, color: '#B21F24' }}>{s.nivel}</td>
                 <td style={{ padding: '4px 2px', fontSize: '13px', fontWeight: 700 }}>{s.nombre}</td>
-                <td style={{ padding: '4px 2px', fontSize: '10px', color: '#6E6E73', maxWidth: '200px' }}>{s.descripcion}</td>
+                
                 <td style={{ padding: '4px 2px' }}>
                   {s.gratuito ? (
                     <span style={{ fontSize: '12px', fontWeight: 900, color: '#2E7D32' }}>GRATIS</span>
