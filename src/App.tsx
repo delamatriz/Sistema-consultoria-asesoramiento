@@ -1389,13 +1389,13 @@ function PanelEConfiguracion({ onBack, onTeam }: any) {
                   ) : (
                     <span
                       onClick={() => setEditando(s.id)}
-                      style={{ fontSize: '13px', fontWeight: 900, color: '#1D1D1F', cursor: 'pointer', borderBottom: '1px dashed #6E6E73' }}
+                      style={{ fontSize: '13px', fontWeight: 900, color: '#1D1D1F', cursor: 'pointer', borderBottom: '1px dashed #6E6E73', whiteSpace: 'nowrap' }}
                     >
                       $ {s.precio_uyu.toLocaleString()}
                     </span>
                   )}
                 </td>
-                <td style={{ padding: '12px', fontSize: '13px', fontWeight: 700, color: '#6E6E73' }}>
+                <td style={{ padding: '4px 2px', fontSize: '12px', fontWeight: 700, color: '#6E6E73', whiteSpace: 'nowrap' }}>
                   {s.gratuito ? '-' : s.a_determinar ? '-' : s.porcentaje ? '-' : 'U$S ' + (s.precio_uyu / tipoCambio).toFixed(0)}
                 </td>
               
