@@ -577,6 +577,10 @@ function ScreenDetalle({ caseId, onBack, onEscalate }: any) {
             <div style={{ padding: '12px', backgroundColor: '#E8F5E9', borderRadius: '6px' }}>
               <p style={{ color: '#2E7D32', fontWeight: 700, fontSize: '13px', margin: 0 }}>Diagnostico validado por arquitecto especialista</p>
             </div>
+            <div style={{ padding: '14px', backgroundColor: '#FFF8E1', borderRadius: '6px', marginTop: '12px', borderLeft: '4px solid #F59E0B' }}>
+              <p style={{ fontSize: '12px', fontWeight: 700, color: '#1D1D1F', margin: '0 0 6px 0' }}>AVISO IMPORTANTE</p>
+              <p style={{ fontSize: '12px', lineHeight: '1.6', color: '#6E6E73', margin: 0 }}>La presente respuesta ha sido elaborada por un profesional del estudio y tiene caracter orientativo. Al no contar con firma profesional certificada, no constituye un documento tecnico con validez formal. Si necesita respaldar esta consulta con un informe tecnico firmado — con validez ante terceros, administraciones o aseguradoras — puede acceder a nuestra primera actuacion profesional en las opciones de asesoramiento a continuacion.</p>
+            </div> 
           </>
         ) : (
           <p style={{ color: '#6E6E73', fontStyle: 'italic', margin: 0 }}>El diagnostico esta siendo preparado por el arquitecto asignado.</p>
