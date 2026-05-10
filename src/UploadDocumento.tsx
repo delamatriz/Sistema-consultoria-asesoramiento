@@ -49,7 +49,7 @@ export default function UploadDocumento({ estudioId, caseId, actuacionId, onUplo
   return (
     <div style={{ marginBottom: '8px' }}>
       <label style={{
-        display: 'inline-block',
+        display: 'block', width: '100%', textAlign: 'center' as const,
         padding: '8px 16px',
         backgroundColor: '#F5F5F7',
         border: '1px solid #D2D2D7',
