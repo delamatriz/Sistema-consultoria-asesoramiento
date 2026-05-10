@@ -97,7 +97,7 @@ exports.crearPreferenciaPago = onRequest(
     }
   }
 );
-exports.alertar48hs = functions.pubsub.schedule('every 60 minutes').timeZone('America/Montevideo').onRun(async () => {
+exports.alertar48hs = require('firebase-functions').pubsub.schedule('every 60 minutes').timeZone('America/Montevideo').onRun(async () => {
   const ahora = Date.now();
   const limite = ahora - 48 * 60 * 60 * 1000;
   const casosSnap = await db.collection('Estudios').doc(ESTUDIO_ID).collection('Casos').get();
