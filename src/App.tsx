@@ -500,6 +500,11 @@ function ScreenHistorial({ currentUser, onSelect, onBack }: any) {
   const getColor = (estado: string) => {
     if (estado === 'RESPONDIDA') return { bg: '#E8F5E9', text: '#2E7D32' };
     if (estado === 'EN ANÁLISIS') return { bg: '#FFFDE7', text: '#F57F17' };
+    if (estado === 'pago_confirmado') return { bg: '#E3F2FD', text: '#0071E3' };
+    if (estado === 'PAGO PENDIENTE') return { bg: '#FFF3E0', text: '#E65100' };
+    if (estado === 'PAGADA') return { bg: '#E3F2FD', text: '#0071E3' };
+    if (estado === 'PAGO COORDINANDO') return { bg: '#F3E5F5', text: '#7B1FA2' };
+    if (estado === 'FINALIZADA SIN PAGO') return { bg: '#F5F5F7', text: '#6E6E73' };
     return { bg: '#F5F5F7', text: '#B21F24' };
   };
 
