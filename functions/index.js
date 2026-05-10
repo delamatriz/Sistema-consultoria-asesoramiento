@@ -97,7 +97,15 @@ exports.crearPreferenciaPago = onRequest(
     }
   }
 );
-exports.alertar48hs = require('firebase-functions').pubsub.schedule('every 60 minutes').timeZone('America/Montevideo').onRun(async () => {
+exports.alertar48hs = require('firebase-functions/v2/scheduler').onSchedule({
+  schedule: 'every 60 minutes',
+  timeZone: 'America/Montevideo',
+  region: 'southamerica-east1'
+}, async () => {
+  const admin = require('firebase-admin');
+  if (!admin.apps.length) admin.initializeApp();
+  const db = admin.firestore();
+  const ESTUDIO_ID = 'DWo8vQwXQ1ScnLc015zU';
   const ahora = Date.now();
   const limite = ahora - 48 * 60 * 60 * 1000;
   const casosSnap = await db.collection('Estudios').doc(ESTUDIO_ID).collection('Casos').get();
@@ -109,11 +117,7 @@ exports.alertar48hs = require('firebase-functions').pubsub.schedule('every 60 mi
         const caso = casoDoc.data();
         await actDoc.ref.update({ alerta_48hs_enviada: true });
         const msg = 'ALERTA 48hs sin atender. Servicio: ' + (act.nombre_servicio||'') + '. Inmueble: ' + (caso.direccion_inmueble||'') + '. Usuario: ' + (caso.usuario_nombre||'') + '. Caso ID: ' + casoDoc.id;
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ service_id: 'delamatriz', template_id: 'template_no31o7y', user_id: 'd1aTzq_ytY2X8Mrdn', template_params: { asunto: 'ALERTA: Actuacion sin atender 48hs', mensaje: msg, destinatario: 'delamatriz@gmail.com' } })
-        });
+        await fetch('https://api.emailjs.com/api/v1.0/email/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ service_id: 'delamatriz', template_id: 'template_no31o7y', user_id: 'd1aTzq_ytY2X8Mrdn', template_params: { asunto: 'ALERTA: Actuacion sin atender 48hs', mensaje: msg, destinatario: 'delamatriz@gmail.com' } }) });
       }
     }
   }
