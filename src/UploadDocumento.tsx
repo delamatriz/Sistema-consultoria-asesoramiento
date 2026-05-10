@@ -47,18 +47,32 @@ export default function UploadDocumento({ estudioId, caseId, actuacionId, onUplo
     );
   }
   return (
-    <div>
-      <input
-        type="file"
-        accept=".pdf,.docx,.xlsx"
-        onChange={handleArchivo}
-        disabled={subiendo}
-        style={{ fontSize: '13px', color: '#1D1D1F' }}
-      />
-      {subiendo && (
-        <p style={{ fontSize: '12px', color: '#6E6E73', marginTop: '6px' }}>
-          Subiendo... {progreso}%
-        </p>
+    <div style={{ marginBottom: '8px' }}>
+      <label style={{
+        display: 'inline-block',
+        padding: '8px 16px',
+        backgroundColor: '#F5F5F7',
+        border: '1px solid #D2D2D7',
+        borderRadius: '6px',
+        fontSize: '12px',
+        fontWeight: 700,
+        color: '#1D1D1F',
+        cursor: subiendo ? 'not-allowed' : 'pointer',
+        opacity: subiendo ? 0.6 : 1
+      }}>
+        {subiendo ? 'Subiendo ' + progreso + '%...' : 'Adjuntar documento'}
+        <input
+          type="file"
+          accept=".pdf,.docx,.xlsx"
+          onChange={handleArchivo}
+          disabled={subiendo}
+          style={{ display: 'none' }}
+        />
+      </label>
+      {!subiendo && (
+        <span style={{ fontSize: '12px', color: '#6E6E73', marginLeft: '10px' }}>
+          Sin archivo seleccionado
+        </span>
       )}
     </div>
   );
