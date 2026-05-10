@@ -97,3 +97,24 @@ exports.crearPreferenciaPago = onRequest(
     }
   }
 );
+exports.alertar48hs = functions.pubsub.schedule('every 60 minutes').timeZone('America/Montevideo').onRun(async () => {
+  const ahora = Date.now();
+  const limite = ahora - 48 * 60 * 60 * 1000;
+  const casosSnap = await db.collection('Estudios').doc(ESTUDIO_ID).collection('Casos').get();
+  for (const casoDoc of casosSnap.docs) {
+    const actuacionesSnap = await casoDoc.ref.collection('Actuaciones').get();
+    for (const actDoc of actuacionesSnap.docs) {
+      const act = actDoc.data();
+      if (act.estado === 'pago_confirmado' && act.fecha && act.fecha.toMillis() < limite && !act.alerta_48hs_enviada) {
+        const caso = casoDoc.data();
+        await actDoc.ref.update({ alerta_48hs_enviada: true });
+        const msg = 'ALERTA 48hs sin atender. Servicio: ' + (act.nombre_servicio||'') + '. Inmueble: ' + (caso.direccion_inmueble||'') + '. Usuario: ' + (caso.usuario_nombre||'') + '. Caso ID: ' + casoDoc.id;
+        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ service_id: 'delamatriz', template_id: 'template_no31o7y', user_id: 'd1aTzq_ytY2X8Mrdn', template_params: { asunto: 'ALERTA: Actuacion sin atender 48hs', mensaje: msg, destinatario: 'delamatriz@gmail.com' } })
+        });
+      }
+    }
+  }
+});
