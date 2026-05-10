@@ -71,7 +71,7 @@ export default function UploadDocumento({ estudioId, caseId, actuacionId, onUplo
       </label>
       {!subiendo && (
         <span style={{ fontSize: '12px', color: '#6E6E73', marginLeft: '10px' }}>
-          Sin archivo seleccionado
+          Ninguno
         </span>
       )}
     </div>
