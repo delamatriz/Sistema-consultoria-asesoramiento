@@ -180,6 +180,7 @@ export default function App() {
             <div style={styles.navItem} onClick={() => navigate('user_home')}>Inicio</div>
             <div style={styles.navItem} onClick={() => navigate('user_como_funciona')}>Cómo funciona</div>
             <div style={styles.navItem} onClick={() => navigate('user_quienes_somos')}>Quiénes somos</div>
+            <div style={styles.navItem} onClick={() => { navigate('info_actuaciones'); setMenuOpen(false); }}>Nuestras actuaciones</div>
             {currentUser ? (
               <>
                 <div style={styles.navItem} onClick={() => navigate('user_historial')}>Mis consultas</div>
