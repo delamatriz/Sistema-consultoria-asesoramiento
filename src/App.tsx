@@ -14,6 +14,7 @@ import PanelPagos from './PanelPagos';
 import UploadDocumento from './UploadDocumento';
 import { tomarActuacion, entregarActuacion, construirDocumentoEntregable } from './servicios/actuacionService';
 import ScreenActuaciones from './ScreenActuaciones';
+import ScreenTerminos from './ScreenTerminos';
 
 const ESTUDIO_ID = 'DWo8vQwXQ1ScnLc015zU';
 
@@ -144,6 +145,7 @@ export default function App() {
       case 'user_seguimiento': return <ScreenSeguimiento caseId={selectedCaseId} onBack={() => navigate('user_historial')} onActuaciones={() => navigate('user_opciones')} />;
       case 'user_actuaciones': return <ScreenOpcionesActuacion onSelect={(service) => { setSelectedService(service); navigate('user_pago'); }} onBack={() => navigate('user_seguimiento')} />;
       case 'info_actuaciones': return <ScreenActuaciones onBack={() => navigate('user_home')} />;
+      case 'terminos': return <ScreenTerminos onBack={() => navigate('user_home')} />;
       case 'pago_exitoso': return <ScreenPagoResultado tipo="exitoso" onVolver={() => navigate('user_historial')} />;
       case 'pago_pendiente': return <ScreenPagoResultado tipo="pendiente" onVolver={() => navigate('user_historial')} />;
       case 'pago_fallido': return <ScreenPagoResultado tipo="fallido" onVolver={() => navigate('user_historial')} />;  
@@ -181,6 +183,7 @@ export default function App() {
             <div style={styles.navItem} onClick={() => navigate('user_como_funciona')}>Cómo funciona</div>
             <div style={styles.navItem} onClick={() => navigate('user_quienes_somos')}>Quiénes somos</div>
             <div style={styles.navItem} onClick={() => { navigate('info_actuaciones'); setMenuOpen(false); }}>Nuestras actuaciones</div>
+            <div style={styles.navItem} onClick={() => { navigate('terminos'); setMenuOpen(false); }}>Terminos y condiciones</div>
             {currentUser ? (
               <>
                 <div style={styles.navItem} onClick={() => navigate('user_historial')}>Mis consultas</div>
