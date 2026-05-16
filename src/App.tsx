@@ -555,6 +555,7 @@ function ScreenDetalle({ caseId, onBack, onEscalate }: any) {
   return (
     <div style={styles.container}>
       <div style={{ ...styles.engineeringHeader, justifyContent: 'space-between', alignItems: 'center' }}>
+      <button onClick={onBack} style={styles.btnBack}>Volver</button>
         
         <span>Expediente Tecnico Profesional</span>
       </div>
