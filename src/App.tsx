@@ -360,16 +360,40 @@ function ScreenComoFunciona({ onNext }: any) {
 
 // --- PANTALLA QUIÉNES SOMOS ---
 function ScreenQuienesSomos({ onBack }: any) {
+  const isLoggedIn = !!onBack;
   return (
     <div style={styles.container}>
       <h2 style={styles.h2}>QUIÉNES SOMOS</h2>
       <p style={styles.subtitleBold}>Criterio técnico independiente al servicio de su vivienda.</p>
-      <div style={{ ...styles.cardInfo, border: THEME.border }}>
+
+      <div style={{ ...styles.cardInfo, border: THEME.border, marginBottom: '16px' }}>
         <p style={{ lineHeight: '1.8', textAlign: 'justify', fontStyle: 'italic' }}>
-          "Bienvenidos a este espacio de consulta y asesoramiento. Somos un estudio de arquitectura que ha desarrollado una metodología de trabajo específica que nos identifica en el sector, brindando asesoramiento y respaldo en el área de Rehabilitación Edilicia. Nuestra experiencia en el sector nos ha permitido desarrollar un sistema de trabajo único: dando el respaldo técnico especializado que toda propiedad necesita para tener un diagnóstico seguro y la solución acertada, con el apoyo de nuestros técnicos y con la seguridad de obtener el mejor resultado final."
+          "Somos un estudio de arquitectura con 25 años de trayectoria, especializado en patologías edilicias y rehabilitación de edificios bajo régimen de propiedad horizontal. Hemos desarrollado una metodología propia que cubre el ciclo completo de intervención: desde el diagnóstico técnico hasta la supervisión de obra, brindando a cada propiedad el respaldo especializado que necesita."
         </p>
       </div>
-      <button onClick={onBack} style={{ ...styles.btnLuxuryBack, marginTop: '30px' }}>Volver a mi consulta</button>
+
+      <div style={{ ...styles.cardInfo, border: THEME.border, marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '10px', color: THEME.text }}>NUESTRA ESPECIALIZACIÓN</h3>
+        <p style={{ lineHeight: '1.8', color: THEME.textSecondary }}>Diagnóstico de patologías edilicias · Informes técnicos · Gestión de licitaciones · Dirección y supervisión de obra · Asesoramiento a copropietarios y administradores.</p>
+      </div>
+
+      <div style={{ ...styles.cardInfo, border: THEME.border, marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '10px', color: THEME.text }}>ZONA DE ACTUACIÓN</h3>
+        <p style={{ lineHeight: '1.8', color: THEME.textSecondary }}>Todo el territorio nacional. Actuación principal en Montevideo, Canelones y Punta del Este.</p>
+      </div>
+
+      <div style={{ ...styles.cardInfo, border: THEME.border, marginBottom: '30px' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '0.08em', marginBottom: '10px', color: THEME.text }}>CONTACTO</h3>
+        <p style={{ lineHeight: '2', color: THEME.textSecondary }}>
+          Río Negro 1354 of. 36 esq. 18 de Julio — Montevideo, Uruguay<br/>
+          Tel: 2902 9272 &nbsp;·&nbsp; WhatsApp: 099 372 600<br/>
+          delamatriz@gmail.com
+        </p>
+      </div>
+
+      {isLoggedIn && (
+        <button onClick={onBack} style={{ ...styles.btnLuxuryBack, marginTop: '10px' }}>Volver a mi consulta</button>
+      )}
     </div>
   );
 }
