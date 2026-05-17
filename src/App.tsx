@@ -201,7 +201,7 @@ export default function App() {
         )}
       </header>
       <main>{renderContent()}</main>
-      <footer style={styles.footer}>© 2026 DE LA MATRIZ • Arquitectura & Asesoramiento Técnico</footer>
+      <footer style={styles.footer}><span>© 2026 DE LA MATRIZ • Arquitectura & Asesoramiento Técnico</span> <span onClick={() => navigate('terminos')} style={{ cursor: 'pointer', color: '#6E6E73', fontSize: '12px', marginTop: '6px', display: 'block' }}>Términos y condiciones</span></footer>
     </div>
   );
 }
