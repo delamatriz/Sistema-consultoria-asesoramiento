@@ -183,8 +183,8 @@ export default function App() {
             <div style={styles.navItem} onClick={() => { navigate('user_home'); setMenuOpen(false); }}>Inicio</div>
             <div style={styles.navItem} onClick={() => { navigate('quienes_somos'); setMenuOpen(false); }}>Quiénes somos</div>
             <div style={styles.navItem} onClick={() => { navigate('info_actuaciones'); setMenuOpen(false); }}>Nuestras actuaciones</div>
-            <div style={styles.navItem} onClick={() => { navigate('contacto'); setMenuOpen(false); }}>Contacto</div>
             <div style={styles.navItem} onClick={() => { navigate('terminos'); setMenuOpen(false); }}>Términos y condiciones</div>
+            <div style={styles.navItem} onClick={() => { navigate('contacto'); setMenuOpen(false); }}>Contacto</div>
             {currentUser ? (
               <>
                 <div style={{ ...styles.navItem, borderTop: `1px solid ${THEME.softGray}`, marginTop: '10px' }} onClick={() => { navigate('user_historial'); setMenuOpen(false); }}>Mis consultas</div>
