@@ -15,7 +15,7 @@ import UploadDocumento from './UploadDocumento';
 import { tomarActuacion, entregarActuacion, construirDocumentoEntregable } from './servicios/actuacionService';
 import ScreenActuaciones from './ScreenActuaciones';
 import ScreenTerminos from './ScreenTerminos';
-
+import ScreenContacto from './ScreenContacto';
 const ESTUDIO_ID = 'DWo8vQwXQ1ScnLc015zU';
 
 const THEME = {
