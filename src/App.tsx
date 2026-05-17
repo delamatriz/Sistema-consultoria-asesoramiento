@@ -147,6 +147,7 @@ export default function App() {
       case 'user_actuaciones': return <ScreenOpcionesActuacion onSelect={(service) => { setSelectedService(service); navigate('user_pago'); }} onBack={() => navigate('user_seguimiento')} />;
       case 'info_actuaciones': return <ScreenActuaciones onBack={() => navigate('user_home')} />;
       case 'terminos': return <ScreenTerminos onBack={() => navigate('user_home')} />;
+      case 'contacto': return <ScreenContacto onBack={() => navigate('user_home')} />;
       case 'pago_exitoso': return <ScreenPagoResultado tipo="exitoso" onVolver={() => navigate('user_historial')} />;
       case 'pago_pendiente': return <ScreenPagoResultado tipo="pendiente" onVolver={() => navigate('user_historial')} />;
       case 'pago_fallido': return <ScreenPagoResultado tipo="fallido" onVolver={() => navigate('user_historial')} />;  
