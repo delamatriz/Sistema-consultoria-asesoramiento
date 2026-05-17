@@ -20,7 +20,7 @@ function ScreenContacto({ onBack }: any) {
     try {
       await emailjs.send(
         'delamatriz',
-        'template_no31o7y',
+        'template_027uwl1',
         {
           from_name: nombre,
           from_email: email,
