@@ -128,6 +128,7 @@ export default function App() {
       case 'user_home': return <ScreenHome onStart={() => navigate('user_carga')} onHow={() => navigate('user_como_funciona')} userProfile={userProfile} />;
       case 'user_como_funciona': return <ScreenComoFunciona onNext={() => navigate('user_carga')} />;
       case 'user_quienes_somos': return <ScreenQuienesSomos onBack={() => navigate('user_home')} />;
+      case 'quienes_somos': return <ScreenQuienesSomos />;
       case 'user_registro': return <ScreenRegistro onRegister={handleRegister} onLogin={() => navigate('login_usuario')} error={authError} />;
       case 'login_usuario': return <ScreenLogin onLogin={handleLogin} onRegister={() => navigate('user_registro')} onForgot={() => navigate('user_recuperar')} error={authError} />;
       case 'user_recuperar': return <ScreenRecuperar onBack={() => navigate('login_usuario')} />;
@@ -181,7 +182,7 @@ export default function App() {
           <nav style={styles.navMenu}>
             <div style={styles.navItem} onClick={() => navigate('user_home')}>Inicio</div>
             <div style={styles.navItem} onClick={() => navigate('user_como_funciona')}>Cómo funciona</div>
-            <div style={styles.navItem} onClick={() => navigate('user_quienes_somos')}>Quiénes somos</div>
+            <div style={styles.navItem} onClick={() => { navigate('quienes_somos'); setMenuOpen(false); }}>Quiénes somos</div>
             <div style={styles.navItem} onClick={() => { navigate('info_actuaciones'); setMenuOpen(false); }}>Nuestras actuaciones</div>
             <div style={styles.navItem} onClick={() => { navigate('terminos'); setMenuOpen(false); }}>Terminos y condiciones</div>
             {currentUser ? (
