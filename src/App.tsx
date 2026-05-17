@@ -180,25 +180,23 @@ export default function App() {
         <button onClick={() => setMenuOpen(!menuOpen)} style={styles.btnMenu}>{menuOpen ? '✕' : '☰'}</button>
         {menuOpen && (
           <nav style={styles.navMenu}>
-            <div style={styles.navItem} onClick={() => navigate('user_home')}>Inicio</div>
-            <div style={styles.navItem} onClick={() => navigate('user_como_funciona')}>Cómo funciona</div>
+            <div style={styles.navItem} onClick={() => { navigate('user_home'); setMenuOpen(false); }}>Inicio</div>
             <div style={styles.navItem} onClick={() => { navigate('quienes_somos'); setMenuOpen(false); }}>Quiénes somos</div>
             <div style={styles.navItem} onClick={() => { navigate('info_actuaciones'); setMenuOpen(false); }}>Nuestras actuaciones</div>
-            <div style={styles.navItem} onClick={() => { navigate('terminos'); setMenuOpen(false); }}>Terminos y condiciones</div>
+            <div style={styles.navItem} onClick={() => { navigate('contacto'); setMenuOpen(false); }}>Contacto</div>
             {currentUser ? (
               <>
-                <div style={styles.navItem} onClick={() => navigate('user_historial')}>Mis consultas</div>
-                <div style={styles.navItem} onClick={() => { navigate('info_actuaciones'); setMenuOpen(false); }}>Nuestras actuaciones</div>
-                <div style={styles.navItem} onClick={() => navigate('user_perfil')}>Mi perfil</div>
+                <div style={{ ...styles.navItem, borderTop: `1px solid ${THEME.softGray}`, marginTop: '10px' }} onClick={() => { navigate('user_historial'); setMenuOpen(false); }}>Mis consultas</div>
+                <div style={styles.navItem} onClick={() => { navigate('user_perfil'); setMenuOpen(false); }}>Mi perfil</div>
                 <div style={{ ...styles.navItem, color: THEME.primary }} onClick={handleLogout}>Cerrar sesión</div>
               </>
             ) : (
               <>
-                <div style={styles.navItem} onClick={() => navigate('login_usuario')}>Iniciar sesión</div>
-                <div style={{ ...styles.navItem, color: THEME.primary }} onClick={() => navigate('user_registro')}>Registrarse</div>
+                <div style={{ ...styles.navItem, borderTop: `1px solid ${THEME.softGray}`, marginTop: '10px' }} onClick={() => { navigate('login_usuario'); setMenuOpen(false); }}>Iniciar sesión</div>
+                <div style={{ ...styles.navItem, color: THEME.primary }} onClick={() => { navigate('user_registro'); setMenuOpen(false); }}>Registrarse</div>
               </>
             )}
-            <div style={{ ...styles.navItem, color: THEME.primary, borderTop: `1px solid ${THEME.softGray}`, marginTop: '10px' }} onClick={() => navigate('login_tecnico')}>Acceso Profesional 🔐</div>
+            <div style={{ ...styles.navItem, color: THEME.primary, borderTop: `1px solid ${THEME.softGray}`, marginTop: '10px' }} onClick={() => { navigate('login_tecnico'); setMenuOpen(false); }}>Acceso Profesional 🔐</div>
           </nav>
         )}
       </header>
