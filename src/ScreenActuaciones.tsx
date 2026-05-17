@@ -49,7 +49,7 @@ function ScreenActuaciones({ onBack }: any) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {actuaciones.map((a, i) => (
           <div key={i} style={{ backgroundColor: '#FFFFFF', borderRadius: '12px', padding: '25px', border: '1px solid #E5E5E7' }}>
-            <p style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.12em', color: '#6E6E73', margin: '0 0 8px 0', textTransform: 'uppercase' }}>{a.titulo}</p>
+            <p style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.12em', color: '#1D1D1F', margin: '0 0 10px 0', textTransform: 'uppercase', borderLeft: '5px solid #B21F24', paddingLeft: '10px' }}>{a.titulo}</p>
             <p style={{ fontSize: '14px', lineHeight: '1.7', color: '#1D1D1F', margin: 0 }}>{a.descripcion}</p>
           </div>
         ))}
