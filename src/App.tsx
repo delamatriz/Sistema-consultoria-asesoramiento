@@ -8,7 +8,7 @@ import {
 } from 'firebase/auth';
 import {
   doc, getDoc, setDoc, collection,
-  addDoc, getDocs, query, where, serverTimestamp, updateDoc
+  addDoc, deleteDoc, getDocs, query, where, serverTimestamp, updateDoc
 } from 'firebase/firestore';
 import PanelPagos from './PanelPagos';
 import UploadDocumento from './UploadDocumento';
@@ -524,7 +524,7 @@ function ScreenHistorial({ currentUser, onSelect, onBack }: any) {
       const q = query(casosRef, where('usuario_id', '==', currentUser.uid));
       const snapshot = await getDocs(q);
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      setCasos(data);
+      setCasos(data.filter((c: any) => verArchivados ? c.archivado === true : c.archivado !== true));
       setLoading(false);
     };
     fetchCasos();
@@ -656,7 +656,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
   const [arquitectos, setArquitectos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [seleccionado, setSeleccionado] = useState<string | null>(null);
-  const [asignando, setAsignando] = useState(false);
+  const [asignando, setAsignando] = useState(false);const [verArchivados, setVerArchivados] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -668,7 +668,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
       const snapshot = await getDocs(casosRef);
       const ORDEN = { 'NUEVO': 0, 'PAGO PENDIENTE': 1, 'EN ANALISIS': 2, 'RESPONDIDA': 3 };
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a: any, b: any) => (ORDEN[a.estado] ?? 2) - (ORDEN[b.estado] ?? 2) || (b.fecha_creacion?.toMillis?.() ?? 0) - (a.fecha_creacion?.toMillis?.() ?? 0));
-      setCasos(data);
+      setCasos(data.filter((c: any) => verArchivados ? c.archivado === true : c.archivado !== true));
 
       const arqQuery = query(
         collection(db, 'Usuarios'),
@@ -684,6 +684,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
     setLoading(false);
   };
 
+  const archivarCaso = async (id: string, archivar: boolean) => { await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', id), { archivado: archivar }); fetchData(); }; const borrarCaso = async (id: string) => { if (!window.confirm('Borrar este caso definitivamente?')) return; await deleteDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', id)); fetchData(); };
   const asignarArquitecto = async (arquitectoId: string, arquitectoNombre: string) => {
     if (!seleccionado) return;
     setAsignando(true);
@@ -744,7 +745,8 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
       </div>
       <label style={styles.label}>CASOS RECIENTES</label>
       {loading ? <p style={{ color: THEME.gray }}>Cargando casos...</p> : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}><button onClick={() => { setVerArchivados(false); fetchData(); }} style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 900, borderRadius: '4px', border: '1px solid #1D1D1F', backgroundColor: verArchivados ? 'transparent' : '#1D1D1F', color: verArchivados ? '#1D1D1F' : '#FFFFFF', cursor: 'pointer' }}>ACTIVOS</button><button onClick={() => { setVerArchivados(true); fetchData(); }} style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 900, borderRadius: '4px', border: '1px solid #1D1D1F', backgroundColor: verArchivados ? '#1D1D1F' : 'transparent', color: verArchivados ? '#FFFFFF' : '#1D1D1F', cursor: 'pointer' }}>ARCHIVADOS</button></div>  
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           {casos.length === 0 ? (
             <div style={{ ...styles.cardInfo, border: THEME.border, textAlign: 'center' }}>
               <p style={{ color: THEME.gray }}>No hay casos registrados aún.</p>
@@ -771,6 +773,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
                       {c.arquitecto_asignado ? 'REASIGNAR' : 'ASIGNAR'}
                     </button>
                     {c.arquitecto_nombre && <span style={{ fontSize: '10px', color: THEME.gray }}>{c.arquitecto_nombre}</span>}
+                    <button onClick={() => archivarCaso(c.id, !c.archivado)} style={{ fontSize: '10px', fontWeight: 900, backgroundColor: 'transparent', color: THEME.gray, border: '1px solid #ccc', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>{c.archivado ? 'DESARCHIVAR' : 'ARCHIVAR'}</button><button onClick={() => borrarCaso(c.id)} style={{ fontSize: '10px', fontWeight: 900, backgroundColor: 'transparent', color: '#B21F24', border: '1px solid #B21F24', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>BORRAR</button>
                   </div>
                 </div>
               </div>
@@ -822,7 +825,7 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
       const snapshot = await getDocs(q);
       const ORDEN_DASH: Record<string, number> = { 'NUEVO': 0, 'PAGO PENDIENTE': 1, 'EN ANALISIS': 2, 'RESPONDIDA': 3 };
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a: any, b: any) => (ORDEN_DASH[a.estado] ?? 2) - (ORDEN_DASH[b.estado] ?? 2) || (b.fecha_creacion?.toMillis?.() ?? 0) - (a.fecha_creacion?.toMillis?.() ?? 0));
-      setCasos(data);
+      setCasos(data.filter((c: any) => verArchivados ? c.archivado === true : c.archivado !== true));
       setLoading(false);
     };
     fetchCasos();
@@ -1294,7 +1297,7 @@ function PanelGConsultas({ onCase, onBack }: any) {
       const casosRef = collection(db, 'Estudios', ESTUDIO_ID, 'Casos');
       const snapshot = await getDocs(casosRef);
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      setCasos(data);
+      setCasos(data.filter((c: any) => verArchivados ? c.archivado === true : c.archivado !== true));
       setLoading(false);
     };
     fetchCasos();
@@ -1481,7 +1484,7 @@ function PanelAMisCasos({ currentUser, onBack, onCase }: any) {
       const q = query(casosRef, where('arquitecto_asignado', '==', currentUser.uid));
       const snapshot = await getDocs(q);
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      setCasos(data);
+      setCasos(data.filter((c: any) => verArchivados ? c.archivado === true : c.archivado !== true));
       setLoading(false);
     };
     fetch();
@@ -1546,7 +1549,7 @@ function PanelAMiCuenta({ currentUser, onBack }: any) {
       const snapshot = await getDocs(q);
       const ORDEN_ARQ: Record<string, number> = { 'NUEVO': 0, 'PAGO PENDIENTE': 1, 'EN ANALISIS': 2, 'RESPONDIDA': 3 };
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a: any, b: any) => (ORDEN_ARQ[a.estado] ?? 2) - (ORDEN_ARQ[b.estado] ?? 2) || (b.fecha_creacion?.toMillis?.() ?? 0) - (a.fecha_creacion?.toMillis?.() ?? 0));
-      setCasos(data);
+      setCasos(data.filter((c: any) => verArchivados ? c.archivado === true : c.archivado !== true));
       setLoading(false);
     };
     fetch();
