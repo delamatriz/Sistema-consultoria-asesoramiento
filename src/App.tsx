@@ -743,11 +743,10 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
         <button onClick={onBiblioteca} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '10px' }}>Biblioteca</button>
         <button onClick={onPagos} style={{ ...styles.btnSecondaryOutline, flex: 1, fontSize: '10px' }}>Tesorería</button>
       </div>
-      <label style={styles.label}>CASOS RECIENTES</label>
+      <label style={styles.label}>CASOS RECIENTES</label><div style={{ display: 'flex', gap: '10px', margin: '10px 0' }}><button onClick={() => { setVerArchivados(false); fetchData(); }} style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 900, borderRadius: '4px', border: '1px solid #B21F24', backgroundColor: verArchivados ? 'transparent' : '#B21F24', color: verArchivados ? '#B21F24' : '#FFFFFF', cursor: 'pointer' }}>ACTIVOS</button><button onClick={() => { setVerArchivados(true); fetchData(); }} style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 900, borderRadius: '4px', border: '1px solid #B21F24', backgroundColor: verArchivados ? '#B21F24' : 'transparent', color: verArchivados ? '#FFFFFF' : '#B21F24', cursor: 'pointer' }}>ARCHIVADOS</button></div>
       {loading ? <p style={{ color: THEME.gray }}>Cargando casos...</p> : (
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}><button onClick={() => { setVerArchivados(false); fetchData(); }} style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 900, borderRadius: '4px', border: '1px solid #1D1D1F', backgroundColor: verArchivados ? 'transparent' : '#1D1D1F', color: verArchivados ? '#1D1D1F' : '#FFFFFF', cursor: 'pointer' }}>ACTIVOS</button><button onClick={() => { setVerArchivados(true); fetchData(); }} style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 900, borderRadius: '4px', border: '1px solid #1D1D1F', backgroundColor: verArchivados ? '#1D1D1F' : 'transparent', color: verArchivados ? '#FFFFFF' : '#1D1D1F', cursor: 'pointer' }}>ARCHIVADOS</button></div>  
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          {casos.length === 0 ? (
+              {casos.length === 0 ? (
             <div style={{ ...styles.cardInfo, border: THEME.border, textAlign: 'center' }}>
               <p style={{ color: THEME.gray }}>No hay casos registrados aún.</p>
             </div>
@@ -873,7 +872,7 @@ function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBibliot
       </div>
 
       {/* Casos recientes */}
-      <label style={styles.label}>CASOS RECIENTES</label>
+      <label style={styles.label}>CASOS RECIENTES</label><div style={{ display: 'flex', gap: '10px', margin: '10px 0' }}><button onClick={() => { setVerArchivados(false); fetchData(); }} style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 900, borderRadius: '4px', border: '1px solid #B21F24', backgroundColor: verArchivados ? 'transparent' : '#B21F24', color: verArchivados ? '#B21F24' : '#FFFFFF', cursor: 'pointer' }}>ACTIVOS</button><button onClick={() => { setVerArchivados(true); fetchData(); }} style={{ padding: '6px 14px', fontSize: '11px', fontWeight: 900, borderRadius: '4px', border: '1px solid #B21F24', backgroundColor: verArchivados ? '#B21F24' : 'transparent', color: verArchivados ? '#FFFFFF' : '#B21F24', cursor: 'pointer' }}>ARCHIVADOS</button></div>
       {loading ? <p style={{ color: THEME.gray }}>Cargando...</p> : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           {casos.length === 0 ? (
