@@ -757,7 +757,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
                   <div onClick={() => onCase(c.id)} style={{ cursor: 'pointer', flex: 1 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <strong>{c.usuario_nombre || 'Usuario'}</strong>
-                      {c.fecha_creacion && c.estado !== 'RESPONDIDA' && (() => { const horas = Math.floor((new Date().getTime() - (c.fecha_creacion.toDate ? c.fecha_creacion.toDate() : new Date(c.fecha_creacion)).getTime()) / (1000 * 60 * 60)); return <span style={{ fontSize: '10px', fontWeight: 900, padding: '3px 8px', borderRadius: '4px', border: horas < 24 ? '1px solid #2E7D32' : horas < 48 ? '1px solid #F57F17' : '1px solid #B21F24', backgroundColor: horas < 24 ? '#E8F5E9' : horas < 48 ? '#FFFDE7' : '#FFEBEE', color: horas < 24 ? '#2E7D32' : horas < 48 ? '#F57F17' : '#B21F24' }}>{horas < 24 ? 'En plazo' : horas < 48 ? horas + 'hs' : 'VENCIDO'}</span>; })()}
+                      
                     </div>
                     <p style={{ fontSize: '12px', color: THEME.gray, marginTop: '3px' }}>{c.descripcion?.substring(0, 60)}...</p>
                     <p style={{ fontSize: '11px', color: THEME.gray }}>{c.direccion_inmueble}</p>
