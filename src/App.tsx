@@ -140,7 +140,7 @@ export default function App() {
         else if (status === 'EN ANÁLISIS') navigate('user_analizando', id);
         else navigate('user_seguimiento', id);
       }} onBack={() => navigate('user_home')} />;
-      case 'user_detalle': return <ScreenDetalle caseId={selectedCaseId} onBack={() => navigate('user_historial')} onEscalate={() => navigate('user_opciones')} />;
+      case 'user_detalle': return <ScreenDetalle caseId={selectedCaseId} onBack={()=> navigate('user_historial')} onEscalate={()=> navigate('user_opciones')} onAsignar={(id: string) => { setSeleccionado(id); }} />;
       case 'user_opciones': return <ScreenOpciones caseId={selectedCaseId} onSelect={(service) => { setSelectedService(service); navigate('user_metodo_pago'); }} onBack={() => navigate('user_detalle')} />;
       case 'user_pago': return <ScreenPago service={selectedService} onConfirm={() => navigate('user_metodo_pago')} onBack={() => navigate('user_opciones')} />;
       case 'user_metodo_pago': return <ScreenMetodoPago caseId={selectedCaseId} currentUser={currentUser} selectedService={selectedService} onBack={() => navigate('user_opciones')} onDone={() => navigate('user_historial')} />;
