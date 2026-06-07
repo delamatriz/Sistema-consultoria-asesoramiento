@@ -988,6 +988,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
   const [diagnostico, setDiagnostico] = useState('');
   const [generandoIA, setGenerandoIA] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [seleccionado, setSeleccionado] = useState<string|null>(null); const [arquitectos, setArquitectos] = useState<any[]>([]); const [asignando, setAsignando] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [verTabla, setVerTabla] = useState(false);
   const [precioPropuesto, setPrecioPropuesto] = useState(''); const [actuaciones, setActuaciones] = useState<any[]>([]); const [mensajeContacto, setMensajeContacto] = useState(''); const [enviandoContacto, setEnviandoContacto] = useState(false); const [contactoEnviado, setContactoEnviado] = useState(false);
