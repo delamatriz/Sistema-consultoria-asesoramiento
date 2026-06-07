@@ -516,7 +516,7 @@ function ScreenAnalizando({ onExit }: any) {
 function ScreenHistorial({ currentUser, onSelect, onBack }: any) {
   const [casos, setCasos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [verArchivados, setVerArchivados] = useState(false);
   useEffect(() => {
     if (!currentUser) { setLoading(false); return; }
     const fetchCasos = async () => {
