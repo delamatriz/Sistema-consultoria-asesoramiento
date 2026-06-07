@@ -584,6 +584,7 @@ function ScreenDetalle({ caseId, onBack, onEscalate, onAsignar }: any) {
       setLoading(false);
     });
   }, [caseId]); useEffect(() => { if (!caseId) return; getDocs(collection(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId, 'Actuaciones')).then(snap => { setActuaciones(snap.docs.map(d => ({ id: d.id, ...d.data() }))); }); }, [caseId]);
+  const asignarArquitecto = async (arquitectoId: string, arquitectoNombre: string) => { if (!seleccionado) return; setAsignando(true); try { await updateDoc(doc(db,'Estudios',ESTUDIO_ID,'Casos',seleccionado),{arquitecto_asignado:arquitectoId,arquitecto_nombre:arquitectoNombre,estado:'EN ANÁLISIS'}); setCaso((prev: any) => ({...prev,arquitecto_asignado:arquitectoId,arquitecto_nombre:arquitectoNombre,estado:'EN ANÁLISIS'})); setSeleccionado(null); try { const arqSnap = await getDoc(doc(db,'Usuarios',arquitectoId)); if (arqSnap.exists()) { const emailjs = await import('@emailjs/browser'); await emailjs.send('delamatriz','template_no31o7y',{asunto:'Nuevo caso asignado - De La Matriz',mensaje:'Hola '+arquitectoNombre+', se te asigno un nuevo caso.\n\nInmueble: '+(caso?.direccion_inmueble||'')+'\nDescripcion: '+(caso?.descripcion||''),destinatario:arqSnap.data().email},'d1aTzq_ytY2X8Mrdn'); } } catch(emailErr) { console.error('Email arquitecto:',emailErr); } } catch(e) { console.error('Error asignando:',e); } setAsignando(false); };
   if (loading) return <div style={styles.container}><p style={{ color: '#6E6E73' }}>Cargando...</p></div>;
 
   return (
