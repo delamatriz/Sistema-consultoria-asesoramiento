@@ -808,6 +808,7 @@ function PanelCDirector({ currentUser, userProfile, onCase, onConfig, onTeam, on
 function PanelADashboard({ currentUser, userProfile, onCase, onLogout, onBiblioteca, onMisCasos, onMiCuenta, onMiPerfil }: any) {
   const [casos, setCasos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [verArchivados, setVerArchivados] = useState(false);
   useEffect(() => {
     if (!currentUser) return;
     const fetchCasos = async () => {
