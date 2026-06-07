@@ -1143,7 +1143,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                 </select>
               </div>
             )}
-            {isDirectorView && !caso?.arquitecto_asignado && <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}><p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>ARQUITECTO ASIGNADO</p><button onClick={() => setSeleccionado(caseId)} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', color: '#1D1D1F', border: '2px solid #1D1D1F', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>ASIGNAR ARQUITECTO</button></div>}
+            {isDirectorView && !caso?.arquitecto_asignado && <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}><p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>ARQUITECTO ASIGNADO</p><button onClick={() => onAsignar && onAsignar(caseId)} style={{ width: '100%', padding: '12px', backgroundColor: 'transparent', color: '#1D1D1F', border: '2px solid #1D1D1F', borderRadius: '6px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>ASIGNAR ARQUITECTO</button></div>}
             {isDirectorView && (
               <div style={{ borderTop: '1px solid #E5E5E7', paddingTop: '10px', marginTop: '10px' }}>
                 <p style={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.1em', color: THEME.gray, margin: '0 0 8px 0' }}>HONORARIO ARQUITECTO ($ UYU)</p>
