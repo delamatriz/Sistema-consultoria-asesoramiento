@@ -573,7 +573,7 @@ function ScreenHistorial({ currentUser, onSelect, onBack }: any) {
 }
 
 // --- PANTALLA DETALLE ---
-function ScreenDetalle({ caseId, onBack, onEscalate }: any) {
+function ScreenDetalle({ caseId, onBack, onEscalate, onAsignar }: any) {
   const [caso, setCaso] = useState<any>(null);
   const [loading, setLoading] = useState(true); const [actuaciones, setActuaciones] = useState<any[]>([]);
   useEffect(() => {
