@@ -1166,7 +1166,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
                   <button onClick={async () => {
                     await updateDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId), { pago_estado: 'pagado' });
                     setCaso((prev: any) => ({ ...prev, pago_estado: 'pagado' }));
-                  }} style={{ backgroundColor: '#2E7D32', color: '#FFFFFF', border: 'none', padding: '8px 16px', fontSize: '11px', fontWeight: 900, cursor: 'pointer', borderRadius: '4px' }}>
+                  }} style={{ backgroundColor: '#4CAF50', color: '#FFFFFF', border: 'none', padding: '10px', fontSize: '11px', fontWeight: 900, cursor: 'pointer', width: '100%', borderRadius: '6px', borderRadius: '4px' }}>
                     MARCAR COMO PAGADO
                   </button>
                 )}
