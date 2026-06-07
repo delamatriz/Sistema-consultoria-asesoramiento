@@ -576,6 +576,7 @@ function ScreenHistorial({ currentUser, onSelect, onBack }: any) {
 function ScreenDetalle({ caseId, onBack, onEscalate, onAsignar }: any) {
   const [caso, setCaso] = useState<any>(null);
   const [loading, setLoading] = useState(true); const [actuaciones, setActuaciones] = useState<any[]>([]); const [seleccionado, setSeleccionado] = useState<string|null>(null); const [arquitectos, setArquitectos] = useState<any[]>([]); const [asignando, setAsignando] = useState(false);
+  useEffect(() => { if (!seleccionado) return; const q = query(collection(db,'Usuarios'), where('rol','==','arquitecto'), where('estudio_id','==',ESTUDIO_ID)); getDocs(q).then(snap => setArquitectos(snap.docs.map(d => ({id:d.id,...d.data()})))); }, [seleccionado]);
   useEffect(() => {
     if (!caseId) { setLoading(false); return; }
     getDoc(doc(db, 'Estudios', ESTUDIO_ID, 'Casos', caseId)).then(d => {
