@@ -1273,7 +1273,7 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
         </div>
       </div>
     </div>
-  );
+    );
 }
 function PanelB1Tablero({ caseId, onBack, onUserView }: any) {
   return (
