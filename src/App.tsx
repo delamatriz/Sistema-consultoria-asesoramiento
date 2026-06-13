@@ -1270,10 +1270,11 @@ function PanelBFicha({ caseId, onBack, onAdvanced, isDirectorView }: any) {
               )}
             </div>
           )}
-        </div>
-      </div>
+       </div>
     </div>
+    {seleccionado && (<div style={{position:'fixed',top:0,left:0,width:'100%',height:'100%',backgroundColor:'rgba(0,0,0,0.6)',display:'flex',justifyContent:'center',alignItems:'center',zIndex:1000}}><div style={{backgroundColor:'#FFFFFF',padding:'35px',borderRadius:'12px',width:'90%',maxWidth:'420px',border:'1px solid #E5E5E7'}}><h3 style={{margin:'0 0 8px 0',fontWeight:900}}>ASIGNAR ARQUITECTO</h3><p style={{color:'#6E6E73',fontSize:'13px',marginBottom:'25px'}}>Selecciona el profesional responsable para este caso.</p><div style={{display:'flex',flexDirection:'column',gap:'10px'}}>{arquitectos.length===0?<p style={{color:'#6E6E73',textAlign:'center'}}>No hay arquitectos registrados.</p>:arquitectos.map(arq=>(<button key={arq.id} onClick={()=>asignarArquitecto(arq.id,arq.nombre)} disabled={asignando} style={{padding:'15px 20px',textAlign:'left',border:'1px solid #E5E5E7',borderRadius:'8px',cursor:'pointer',background:'#FFFFFF',fontSize:'14px',fontWeight:700,opacity:asignando?0.7:1}}>{arq.nombre}<span style={{display:'block',fontSize:'11px',color:'#6E6E73',fontWeight:400,marginTop:'3px'}}>{arq.email}</span></button>))}<button onClick={()=>setSeleccionado(null)} style={{marginTop:'10px',border:'none',background:'none',color:'#6E6E73',cursor:'pointer',fontSize:'13px'}}>Cancelar</button></div></div></div>)}
     );
+}
 }
 function PanelB1Tablero({ caseId, onBack, onUserView }: any) {
   return (
